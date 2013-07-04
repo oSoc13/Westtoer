@@ -23,7 +23,9 @@ class Fetcher {
     private $pass;
 
     function __construct($uri, $user, $pass) {
-        $this->client = new Client($uri);
+        $this->client = new Client($uri, array( 'params.cache.override_ttl' => 3600,
+                                                'params.cache.revalidate'   => 'skip'
+                                               ));
         # add caching object.
         $this->client->addSubscriber(new CachePlugin(new DoctrineCacheAdapter(new ArrayCache()), true));
         $this->user = $user;
@@ -33,9 +35,6 @@ class Fetcher {
     function get($resource){
         # get request object
         $request = $this->client->get($resource)->setAuth($this->user, $this->pass);
-
-        # cache for 60 minutes
-        $request->getParams()->set('cache.override_ttl', 60*60);
 
         # get response
         $response = $request->send();
