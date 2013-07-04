@@ -54,10 +54,7 @@ function is_event($event){
         if( $value == null )
             $score--;
     }
-    if($score < $base_score)
-        return false;
-    else
-        return true;
+    return $score > $base_score;
 }
 
 foreach ($events as $event_id => $event){
