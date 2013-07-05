@@ -1,8 +1,11 @@
-################
-# Config files #
-################
-/config.ini
-
+###########
+# Laravel #
+###########
+/bootstrap/compiled.php
+/vendor
+/app/config/testing
+composer.phar
+composer.lock
 
 ##########################
 # Editor generated files #
