@@ -16,12 +16,11 @@ class CreateFiltersTable extends Migration {
             $table->create();
             $table->timestamps();
             $table->increments('id');
-
             // type of content: Event, Attraction,...
             $table->string('type'); 
             
             $table->integer('screen_id'); 
-
+            
             // simple scoring
             //	-99: exclude
             //	 -1: less important
