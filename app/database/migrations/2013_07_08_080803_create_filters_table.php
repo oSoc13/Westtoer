@@ -16,22 +16,37 @@ class CreateFiltersTable extends Migration {
             $table->create();
             $table->timestamps();
             $table->increments('id');
-            // type of content: Event, Attraction,...
+
+            /*
+             |--------------------------------------------------------------------------
+             | Type of content, using enum from Filter model.
+             |--------------------------------------------------------------------------
+             |
+             | EVENT
+             | ATTRACTION
+             |
+             */
             $contenttypes = array(
                 Filter::EVENT,
                 Filter::ATTRACTION,
             );
- 
             $table->enum('type', $contenttypes)->default($contenttypes[0]);
             
             $table->integer('screen_id'); 
 
-            // simple scoring
-            //  -99: exclude
-            //   -1: less important
-            //    0: not rated
-            //    1: important
-            $table->integer('score');
+            /*
+             |--------------------------------------------------------------------------
+             | Scoring based on certainty factors
+             |--------------------------------------------------------------------------
+             |
+             | -1: exclude
+             |  0: don't care/not scored
+             |  1: important
+             | 
+             |  -0.5: less important
+             |
+             */
+            $table->float('score')->default(0);
 
         });
     }
