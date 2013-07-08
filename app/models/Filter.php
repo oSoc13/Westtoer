@@ -18,4 +18,9 @@ class Filter extends Eloquent{
 	const EVENT = 0;
 	const ATTRACTION = 1;
 
+	public function screen()
+	{
+	    return $this->belongs_to('Screen','screen_id');
+	}
+
 }

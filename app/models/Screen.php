@@ -10,4 +10,13 @@ class Screen extends Eloquent{
 	 */
 	protected $table = 'screens';
 
+
+	/**
+	 * Filter objects.
+	 */
+	public function filters()
+    {
+        return $this->has_many('Filter');
+    }
+
 }
