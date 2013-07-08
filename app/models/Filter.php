@@ -10,4 +10,12 @@ class Filter extends Eloquent{
 	 */
 	protected $table = 'filters';
 
+
+	/**
+	 * Enums for Filtertypes
+	 * 
+	 */
+	const EVENT = 0;
+	const ATTRACTION = 1;
+
 }

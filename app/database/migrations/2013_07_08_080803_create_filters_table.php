@@ -18,14 +18,11 @@ class CreateFiltersTable extends Migration {
             $table->increments('id');
             // type of content: Event, Attraction,...
             $contenttypes = array(
-                Connection::CAPTURED,
-                Connection::PENDING,
-                Connection::ACTIVE,
-                Connection::CLOSED,
+                Filter::EVENT,
+                Filter::ATTRACTION,
             );
  
             $table->enum('type', $contenttypes)->default($contenttypes[0]);
-            $table->string('type'); 
             
             $table->integer('screen_id'); 
 
