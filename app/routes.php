@@ -13,5 +13,10 @@
 
 Route::get('/', function()
 {
-	return View::make('hello');
+    return 'Hello World';
 });
+
+Route::controller('/api', 'APIController');
+Route::resource('/api/event', 'EventController');
+
+Route::get('/ui', 'DashboardController@showHome');
