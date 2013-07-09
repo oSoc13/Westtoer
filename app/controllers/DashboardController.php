@@ -47,10 +47,22 @@ class DashboardController extends BaseController {
             'name'     => $screen->name,
             'radius'   => $screen->radius
         );
+
         $this->layout->settings  = View::make('components.screen.settings', $settings);
-        
+
+        /**
+         * Building weather
+         */
         $this->layout->weather   = View::make('components.screen.weather');
+
+        /**
+         * Building albums
+         */
         $this->layout->albums    = View::make('components.screen.albums');
+
+        /**
+         * Building tags
+         */
         $this->layout->tags      = View::make('components.screen.tags');
         
         /**
@@ -65,9 +77,7 @@ class DashboardController extends BaseController {
             'filters' => $filters
         );
 
-        //die('<pre>'.json_encode($list).'</pre>');
-
-        $this->layout->list      = View::make('components.screen.list', $list);
+        $this->layout->list = View::make('components.screen.list', $list);
     }
 
     private function getFilters($screen){
@@ -84,44 +94,50 @@ class DashboardController extends BaseController {
         } 
         else
         {
-            $raw_events = Hub::get();
+            // http://westtoer.be/voc/provider
+            $provider = "UITDB"; // "WIN";
+
+            $raw_events = Hub::get($provider."/Events.json");
 
             foreach ($raw_events as $key => $raw_event) {
                 $event               = new Event();
-                $event->identifier   = $this->retrieve_value($raw_event,'http://purl.org/dc/terms/identifier');
+                //$event->identifier   = $this->retrieve_value($raw_event,'http://purl.org/dc/terms/identifier');
                 $event->name         = $this->retrieve_value($raw_event,'http://schema.org/name');
                 $event->image        = $this->retrieve_value($raw_event,'http://schema.org/image');
                 $event->location     = $this->retrieve_value($raw_event,'http://schema.org/location');
                 $event->startDate    = $this->retrieve_value($raw_event,'http://schema.org/startDate');
                 $event->endDate      = $this->retrieve_value($raw_event,'http://schema.org/endDate');
-                
+                $event->provider     = $provider;
+                $event->addressLocality = " ";
+
 
                 // Check cache first for reverse geo
-                // http://schema.org/addressLocality
-                if ($addressLocality = Cache::section('geo')->get($event->location))
-                {
-                    $event->addressLocality = $addressLocality;
-                }
-                else
-                {
-                    $location = explode('/', $event->location);
-                    $geo = explode(',', array_pop($location));
+                // http://schema.org/addressLocality -> include in datahub?
+                // $location = explode('/', $event->location);
+                // $location = array_pop($location);
+                // if ($addressLocality = Cache::section('geo')->get($location))
+                // {
+                //     $event->addressLocality = $addressLocality;
+                // }
+                // else
+                // {
+                //     $geo = explode(',', $location);
                     
-                    $adapter  = new \Geocoder\HttpAdapter\GuzzleHttpAdapter();
-                    $geocoder = new \Geocoder\Geocoder();
-                    $geocoder->registerProviders(array(
-                         new \Geocoder\Provider\OpenStreetMapsProvider($adapter)
-                     ));
+                //     $adapter  = new \Geocoder\HttpAdapter\GuzzleHttpAdapter();
+                //     $geocoder = new \Geocoder\Geocoder();
+                //     $geocoder->registerProviders(array(
+                //          new \Geocoder\Provider\OpenStreetMapsProvider($adapter)
+                //      ));
                     
-                    $geo_result = $geocoder->reverse($geo[0], $geo[1]);
+                //     $geo_result = $geocoder->reverse($geo[0], $geo[1]);
 
-                    $formatter = new \Geocoder\Formatter\Formatter($geo_result);
-                    $event->addressLocality = $formatter->format('%S %n, %z %L');
+                //     $formatter = new \Geocoder\Formatter\Formatter($geo_result);
+                //     $event->addressLocality = $formatter->format('%S %n, %z %L');
 
 
-                    // Cache reverse geo forever
-                    Cache::section('geo')->forever($event->location, $event->addressLocality);
-                }
+                //     // Cache reverse geo forever
+                //     Cache::section('geo')->forever($location, $event->addressLocality);
+                // }
 
 
                 if( $this->is_event($event) ){

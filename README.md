@@ -16,6 +16,21 @@ Data source for the screen(s). Formats data from cache/data fetcher for screen(s
 
 ## Technologies
 
-* Laravel 4 
+ * Laravel 4
 
-```composer install```
+This project uses Laravel 4 as base framework.
+All dependencies can be installed using composer: http://getcomposer.org/
+Run composer install in the project dir to fetch all libraries.
+
+```
+composer install
+```
+
+## Developed and tested on
+
+ * PHP 5.3.x with APC
+ * MySQL
+
+## Configuration
+
+

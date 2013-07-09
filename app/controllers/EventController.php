@@ -9,44 +9,51 @@ class EventController extends \BaseController {
 	 */
 	public function index()
 	{
+		// http://westtoer.be/voc/provider
+		$provider = "UITDB"; // "WIN";
 
-		$raw_events = Hub::get();
+		$raw_events = Hub::get($provider."/Events.json");
 
 		foreach ($raw_events as $key => $raw_event) {
 			$event 				 = new Event();
-            $event->identifier   = $this->retrieve_value($raw_event,'http://purl.org/dc/terms/identifier');
+            //$event->identifier   = $this->retrieve_value($raw_event,'http://purl.org/dc/terms/identifier');
 			$event->name         = $this->retrieve_value($raw_event,'http://schema.org/name');
 		    $event->image        = $this->retrieve_value($raw_event,'http://schema.org/image');
 		    $event->location     = $this->retrieve_value($raw_event,'http://schema.org/location');
 		    $event->startDate    = $this->retrieve_value($raw_event,'http://schema.org/startDate');
 		    $event->endDate      = $this->retrieve_value($raw_event,'http://schema.org/endDate');
+		    $event->provider 	 = $provider;
+            $event->addressLocality = " ";
 
             // Check cache first for reverse geo
-            // http://schema.org/addressLocality
-            if ($addressLocality = Cache::section('geo')->get($event->location))
-            {
-                $event->addressLocality = $addressLocality;
-            }
-            else
-            {
-                $location = explode('/', $event->location);
-                $geo = explode(',', array_pop($location));
+            // http://schema.org/addressLocality -> include in datahub?
+            
+            // $location = explode('/', $event->location);
+            // $location = array_pop($location);
+            // if ($addressLocality = Cache::section('geo')->get($location))
+            // {
+            //     $event->addressLocality = $addressLocality;
+            // } else
+            // {
+            //     $geo = explode(',', $location);
                 
-                $adapter  = new \Geocoder\HttpAdapter\GuzzleHttpAdapter();
-                $geocoder = new \Geocoder\Geocoder();
-                $geocoder->registerProviders(array(
-                     new \Geocoder\Provider\OpenStreetMapsProvider($adapter)
-                 ));
+            //     $adapter  = new \Geocoder\HttpAdapter\GuzzleHttpAdapter();
+            //     $geocoder = new \Geocoder\Geocoder();
+            //     $geocoder->registerProviders(array(
+            //          new \Geocoder\Provider\OpenStreetMapsProvider($adapter)
+            //      ));
+
+            //     try {
+            //     	$geo_result = $geocoder->reverse($geo[0], $geo[1]);
+            //     	$formatter = new \Geocoder\Formatter\Formatter($geo_result);
+            //     	$event->addressLocality = $formatter->format('%S %n, %z %L');
+	           //      // Cache reverse geo forever
+	           //      Cache::section('geo')->forever($location, $event->addressLocality);
+            //     } catch (Exception $e) {
+            //     	$event->addressLocality = " ";
+            //     }
                 
-                $geo_result = $geocoder->reverse($geo[0], $geo[1]);
-
-                $formatter = new \Geocoder\Formatter\Formatter($geo_result);
-                $event->addressLocality = $formatter->format('%S %n, %z %L');
-
-
-                // Cache reverse geo forever
-                Cache::section('geo')->forever($event->location, $event->addressLocality);
-            }
+            // }
 		    if( $this->is_event($event) ){
 		        // use 'unique' events based on name
 		        $eventlist[$event->name] = $event;
