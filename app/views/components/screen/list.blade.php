@@ -31,7 +31,8 @@
                             {{{ $event->startDate }}}
                             <br>
                             <small>
-                                14:30 - 17:00
+                                {{{ $event->provider }}}
+                                <!--$event->timeInfo-->
                             </small>
                         </td>
                         <td>

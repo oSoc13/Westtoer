@@ -69,7 +69,10 @@ class DashboardController extends BaseController {
          * Building list
          */
 
-        $events  = $this->getEvents();
+        $win_events  = $this->getEvents('WIN');
+        $uitdb_events  = $this->getEvents('UITDB');
+        $events = array_merge ($win_events, $uitdb_events);
+
         $filters = $this->getFilters($screen);
 
         $list = array(
@@ -85,18 +88,15 @@ class DashboardController extends BaseController {
         return $filters;
     }
 
-    private function getEvents($resource = 'WIN/Events.json', $limit = -1)
+    private function getEvents($provider = 'WIN', $limit = -1) // UITDB or WIN
     {
 
-        if ($events = Cache::section('hub')->get($resource.'_parsed'))
+        if ($events = Cache::section('hub')->get($provider .'events_parsed'))
         {
             return $events;
         } 
         else
         {
-            // http://westtoer.be/voc/provider
-            $provider = "UITDB"; // "WIN";
-
             $raw_events = Hub::get($provider."/Events.json");
 
             foreach ($raw_events as $key => $raw_event) {
@@ -107,7 +107,8 @@ class DashboardController extends BaseController {
                 $event->location     = $this->retrieve_value($raw_event,'http://schema.org/location');
                 $event->startDate    = $this->retrieve_value($raw_event,'http://schema.org/startDate');
                 $event->endDate      = $this->retrieve_value($raw_event,'http://schema.org/endDate');
-                $event->provider     = $provider;
+                $event->timeInfo     = $this->retrieve_value($raw_event,'http://westtoer.be/voc/calendar_summary');
+                $event->provider     = $provider; // http://westtoer.be/voc/provider
                 $event->addressLocality = " ";
 
 
@@ -150,7 +151,7 @@ class DashboardController extends BaseController {
                 $events[] = $value;
             }
 
-            Cache::section('hub')->put($resource.'_parsed', $events, 5);
+            Cache::section('hub')->put($provider .'events_parsed', $events, 60*15);
 
             return $events;
         }
@@ -171,7 +172,7 @@ class DashboardController extends BaseController {
     private  function is_event($event){
         // if event has no values, returns false to drop it. 
         // Allowed number of null values can be set through base_score.
-        $base_score = 0; 
+        $base_score = -1; 
         $score = 0;
         foreach ($event as $key => $value) {
             if( $value == null )
