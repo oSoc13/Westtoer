@@ -16,7 +16,7 @@ Route::get('/', function()
     return 'Hello World';
 });
 
+Route::resource('/api/event', 'EventController', array('only' => array('index', 'show')));
 Route::controller('/api', 'APIController');
-Route::resource('/api/event', 'EventController');
 
 Route::get('/ui', 'DashboardController@showHome');

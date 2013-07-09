@@ -4,7 +4,8 @@
 	"keywords": ["framework", "laravel"],
 	"require": {
 		"laravel/framework": "4.0.*",
-		"guzzle/guzzle": "~3.7"
+		"guzzle/guzzle": "~3.7",
+		"jenssegers/model": "*"
 	},
 	"autoload": {
 		"classmap": [

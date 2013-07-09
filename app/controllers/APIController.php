@@ -9,7 +9,7 @@ class APIController extends \BaseController {
 	 */
 	public function getIndex()
     {
-        return Hub::get();
+        return "Welcome @ API";
     }
 
 }
