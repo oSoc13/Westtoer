@@ -19,4 +19,4 @@ Route::get('/', function()
 Route::resource('/api/event', 'EventController', array('only' => array('index', 'show')));
 Route::controller('/api', 'APIController');
 
-Route::get('/ui', 'DashboardController@showHome');
+Route::get('/ui/screen/{id}', 'DashboardController@showHome');

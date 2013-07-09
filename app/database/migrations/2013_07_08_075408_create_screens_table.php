@@ -16,6 +16,7 @@ class CreateScreensTable extends Migration {
             $table->create();
             $table->timestamps();
             $table->increments('id');
+            $table->string('name');
             $table->string('location');
             $table->float('long');
             $table->float('lat');

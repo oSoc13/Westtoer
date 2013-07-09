@@ -2,7 +2,7 @@
 @section('settings')
         <div class="well">
             <h3>
-                Veld &amp; duin settings
+                {{{ $name }}} settings
             </h3>
             <div class="row-fluid">
                 <div class="span6">
@@ -12,7 +12,7 @@
                             Location
                         </label>
                         <div class="controls">
-                            <input type="text" placeholder="Bruges">
+                            <input type="text" placeholder="Bruges" value="{{{ $location }}}">
                         </div>
                     </div>
                     <p>
@@ -23,7 +23,7 @@
                             Radius
                         </label>
                         <div class="controls">
-                            <input type="text" class="span2" placeholder="15">
+                            <input type="text" class="span2" placeholder="15" value="{{{ $radius }}}">
                         </div>
                     </div>
                 </div>

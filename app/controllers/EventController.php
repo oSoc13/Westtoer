@@ -12,17 +12,6 @@ class EventController extends \BaseController {
 
 		$raw_events = Hub::get();
 
-
-		// foreach ($raw_events as $key => $raw_event) {
-		// 	$event = new Event();
-		// 	$event->name 		 = $raw_event['http://schema.org/name'][0]['value'];
-		//     $event->image        = $raw_event['http://schema.org/image'][0]['value'];
-		//     $event->location     = $raw_event['http://schema.org/location'][0]['value'];
-		//     $event->startDate    = $raw_event['http://schema.org/startDate'][0]['value'];
-		//     $event->endDate      = $raw_event['http://schema.org/endDate'][0]['value'];
-		// 	$events[] = $event;
-		// }
-
 		foreach ($raw_events as $key => $raw_event) {
 			$event 				 = new Event();
 			$event->name         = $this->retrieve_value($raw_event,'http://schema.org/name');
