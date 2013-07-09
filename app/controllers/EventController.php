@@ -14,12 +14,16 @@ class EventController extends \BaseController {
 
 		foreach ($raw_events as $key => $raw_event) {
 			$event 				 = new Event();
+            $event->identifier   = $this->retrieve_value($raw_event,'http://purl.org/dc/terms/identifier');
 			$event->name         = $this->retrieve_value($raw_event,'http://schema.org/name');
 		    $event->image        = $this->retrieve_value($raw_event,'http://schema.org/image');
 		    $event->location     = $this->retrieve_value($raw_event,'http://schema.org/location');
 		    $event->startDate    = $this->retrieve_value($raw_event,'http://schema.org/startDate');
 		    $event->endDate      = $this->retrieve_value($raw_event,'http://schema.org/endDate');
 
+            $location = explode('/', $event->location);
+            $geo = explode(',', array_pop($location));
+            //$event->place = $geocoder->reverse($geo[0], $geo[1]);
 		    if( $this->is_event($event) ){
 		        // use 'unique' events based on name
 		        $eventlist[$event->name] = $event;

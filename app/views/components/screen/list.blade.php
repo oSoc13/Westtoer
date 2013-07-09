@@ -15,7 +15,7 @@
             <table class="table">
                 <tbody>
                     <tr>
-                        <th class="span1">
+                        <th class="span2">
                             Date
                         </th>
                         <th>
@@ -25,19 +25,20 @@
                             Options
                         </th>
                     </tr>
+                    @foreach ($events as $event)
                     <tr>
                         <td>
-                            24/09/2013
+                            {{{ $event->startDate }}}
                             <br>
                             <small>
                                 14:30 - 17:00
                             </small>
                         </td>
                         <td>
-                            My little pony festival
+                            {{{ $event->name }}}
                             <br>
                             <small>
-                                Oostende
+                                {{ $event->place }}
                             </small>
                         </td>
                         <td>
@@ -46,195 +47,7 @@
                             <i class="icon-remove"></i>
                         </td>
                     </tr>
-                    <tr class="error">
-                        <td>
-                            24/09/2013
-                            <br>
-                            <small>
-                                14:30 - 17:00
-                            </small>
-                        </td>
-                        <td>
-                            My little pony festival
-                            <br>
-                            <small>
-                                Oostende
-                            </small>
-                        </td>
-                        <td>
-                            <i class="icon-thumbs-up"></i>
-                            <i class="icon-thumbs-down"></i>
-                            <i class="icon-remove"></i>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            24/09/2013
-                            <br>
-                            <small>
-                                14:30 - 17:00
-                            </small>
-                        </td>
-                        <td>
-                            My little pony festival
-                            <br>
-                            <small>
-                                Oostende
-                            </small>
-                        </td>
-                        <td>
-                            <i class="icon-thumbs-up"></i>
-                            <i class="icon-thumbs-down"></i>
-                            <i class="icon-remove"></i>
-                        </td>
-                    </tr>
-                    <tr class="warning">
-                        <td>
-                            24/09/2013
-                            <br>
-                            <small>
-                                14:30 - 17:00
-                            </small>
-                        </td>
-                        <td>
-                            My little pony festival
-                            <br>
-                            <small>
-                                Oostende
-                            </small>
-                        </td>
-                        <td>
-                            <i class="icon-thumbs-up"></i>
-                            <i class="icon-thumbs-down"></i>
-                            <i class="icon-remove"></i>
-                        </td>
-                    </tr>
-                    <tr class="success">
-                        <td>
-                            24/09/2013
-                            <br>
-                            <small>
-                                14:30 - 17:00
-                            </small>
-                        </td>
-                        <td>
-                            My little pony festival
-                            <br>
-                            <small>
-                                Oostende
-                            </small>
-                        </td>
-                        <td>
-                            <i class="icon-thumbs-up"></i>
-                            <i class="icon-thumbs-down"></i>
-                            <i class="icon-remove"></i>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            24/09/2013
-                            <br>
-                            <small>
-                                14:30 - 17:00
-                            </small>
-                        </td>
-                        <td>
-                            My little pony festival
-                            <br>
-                            <small>
-                                Oostende
-                            </small>
-                        </td>
-                        <td>
-                            <i class="icon-thumbs-up"></i>
-                            <i class="icon-thumbs-down"></i>
-                            <i class="icon-remove"></i>
-                        </td>
-                    </tr>
-                    <tr class="warning">
-                        <td>
-                            24/09/2013
-                            <br>
-                            <small>
-                                14:30 - 17:00
-                            </small>
-                        </td>
-                        <td>
-                            My little pony festival
-                            <br>
-                            <small>
-                                Oostende
-                            </small>
-                        </td>
-                        <td>
-                            <i class="icon-thumbs-up"></i>
-                            <i class="icon-thumbs-down"></i>
-                            <i class="icon-remove"></i>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            24/09/2013
-                            <br>
-                            <small>
-                                14:30 - 17:00
-                            </small>
-                        </td>
-                        <td>
-                            My little pony festival
-                            <br>
-                            <small>
-                                Oostende
-                            </small>
-                        </td>
-                        <td>
-                            <i class="icon-thumbs-up"></i>
-                            <i class="icon-thumbs-down"></i>
-                            <i class="icon-remove"></i>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            24/09/2013
-                            <br>
-                            <small>
-                                14:30 - 17:00
-                            </small>
-                        </td>
-                        <td>
-                            My little pony festival
-                            <br>
-                            <small>
-                                Oostende
-                            </small>
-                        </td>
-                        <td>
-                            <i class="icon-thumbs-up"></i>
-                            <i class="icon-thumbs-down"></i>
-                            <i class="icon-remove"></i>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            24/09/2013
-                            <br>
-                            <small>
-                                14:30 - 17:00
-                            </small>
-                        </td>
-                        <td>
-                            My little pony festival
-                            <br>
-                            <small>
-                                Oostende
-                            </small>
-                        </td>
-                        <td>
-                            <i class="icon-thumbs-up"></i>
-                            <i class="icon-thumbs-down"></i>
-                            <i class="icon-remove"></i>
-                        </td>
-                    </tr>
+                    @endforeach
                 </tbody>
             </table>
             <div class="pagination pagination-centered">

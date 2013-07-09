@@ -20,50 +20,123 @@ class DashboardController extends BaseController {
     public function showHome($id)
     {
         $screen = Screen::find($id);
-        $events = $this->getEvents();
         $title  = "Dashboard - " . $screen->location;
 
 
         $this->layout->head         = View::make('components.head')->with('title', $title);
-        $this->layout->navbar       = View::make('components.navbar');
-        $this->layout->breadcrumbs   = View::make('components.breadcrumbs');
 
+        $this->layout->navbar       = View::make('components.navbar');
+
+        /**
+         * Building breadcrumbs
+         */
+        $breadcrumbs = array(
+            'bread_title' =>  $screen->name,
+            'bread_items' => array(
+                array('name' => 'Username', 'uri' => '/ui'),
+                array('name' => 'Screens', 'uri' => '/ui/screen/' . $id )
+            )
+        ); 
+        $this->layout->breadcrumbs   = View::make('components.breadcrumbs', $breadcrumbs);
+        
+        /**
+         * Building settings
+         */
         $settings = array(
             'location' => $screen->location,
-            'name'   => $screen->name,
+            'name'     => $screen->name,
             'radius'   => $screen->radius
         );
         $this->layout->settings  = View::make('components.screen.settings', $settings);
+        
         $this->layout->weather   = View::make('components.screen.weather');
         $this->layout->albums    = View::make('components.screen.albums');
         $this->layout->tags      = View::make('components.screen.tags');
-        $this->layout->list      = View::make('components.screen.list');
+        
+        /**
+         * Building list
+         */
+
+        $events  = $this->getEvents();
+        $filters = $this->getFilters($screen);
+
+        $list = array(
+            'events'  => $events,
+            'filters' => $filters
+        );
+
+        //die('<pre>'.json_encode($list).'</pre>');
+
+        $this->layout->list      = View::make('components.screen.list', $list);
     }
 
-    private function getEvents()
+    private function getFilters($screen){
+        $filters = EventFilter::find($screen);
+        return $filters;
+    }
+
+    private function getEvents($resource = 'WIN/Events.json', $limit = -1)
     {
 
-        $raw_events = Hub::get();
+        if ($events = Cache::section('hub')->get($resource.'_parsed'))
+        {
+            return $events;
+        } 
+        else
+        {
+            $raw_events = Hub::get();
 
-        foreach ($raw_events as $key => $raw_event) {
-            $event               = new Event();
-            $event->name         = $this->retrieve_value($raw_event,'http://schema.org/name');
-            $event->image        = $this->retrieve_value($raw_event,'http://schema.org/image');
-            $event->location     = $this->retrieve_value($raw_event,'http://schema.org/location');
-            $event->startDate    = $this->retrieve_value($raw_event,'http://schema.org/startDate');
-            $event->endDate      = $this->retrieve_value($raw_event,'http://schema.org/endDate');
+            foreach ($raw_events as $key => $raw_event) {
+                $event               = new Event();
+                $event->identifier   = $this->retrieve_value($raw_event,'http://purl.org/dc/terms/identifier');
+                $event->name         = $this->retrieve_value($raw_event,'http://schema.org/name');
+                $event->image        = $this->retrieve_value($raw_event,'http://schema.org/image');
+                $event->location     = $this->retrieve_value($raw_event,'http://schema.org/location');
+                $event->startDate    = $this->retrieve_value($raw_event,'http://schema.org/startDate');
+                $event->endDate      = $this->retrieve_value($raw_event,'http://schema.org/endDate');
+                
 
-            if( $this->is_event($event) ){
-                // use 'unique' events based on name
-                $eventlist[$event->name] = $event;
+                // Check cache first for reverse geo
+                if ($place = Cache::section('geo')->get($event->location))
+                {
+                    $event->place = $place;
+                }
+                else
+                {
+                    $location = explode('/', $event->location);
+                    $geo = explode(',', array_pop($location));
+                    
+                    $adapter  = new \Geocoder\HttpAdapter\GuzzleHttpAdapter();
+                    $geocoder = new \Geocoder\Geocoder();
+                    $geocoder->registerProviders(array(
+                         new \Geocoder\Provider\OpenStreetMapsProvider($adapter)
+                     ));
+                    
+                    $geo_result = $geocoder->reverse($geo[0], $geo[1]);
+
+                    $formatter = new \Geocoder\Formatter\Formatter($geo_result);
+                    $event->place = $formatter->format('%S %n, %z %L');
+
+
+                    // Cache reverse geo forever
+                    Cache::section('geo')->forever($event->location, $event->place);
+                }
+
+
+                if( $this->is_event($event) ){
+                    // use 'unique' events based on name
+                    $eventlist[$event->name] = $event;
+                }
             }
-        }
 
-        foreach( $eventlist as $key => $value) {
-            $events[] = $value;
-        }
+            foreach( $eventlist as $key => $value) {
+                $events[] = $value;
+            }
 
-        return $events;
+            Cache::section('hub')->put($resource.'_parsed', $events, 5);
+
+            return $events;
+        }
     }
 
 

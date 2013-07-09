@@ -5,7 +5,8 @@
 	"require": {
 		"laravel/framework": "4.0.*",
 		"guzzle/guzzle": "~3.7",
-		"jenssegers/model": "*"
+		"jenssegers/model": "*",
+		"willdurand/geocoder": "*"
 	},
 	"autoload": {
 		"classmap": [

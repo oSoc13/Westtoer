@@ -1,6 +1,6 @@
 <?php
 
-class Filter extends Eloquent{
+class EventFilter extends Eloquent{
 
 
 	/**

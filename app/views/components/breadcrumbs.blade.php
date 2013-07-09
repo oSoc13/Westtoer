@@ -1,16 +1,14 @@
 @layout('layouts.master')
 @section('breadcrumbs')
     <ul class="breadcrumb">
+        @foreach ($bread_items as $breadcrumb)
         <li>
-            <a href="dashboard.html">Marc</a>
+            <a href="{{{$breadcrumb['uri'] }}}">{{{$breadcrumb['name'] }}}</a>
             <span class="divider">/</span>
         </li>
-        <li>
-            <a href="#">Screens</a>
-            <span class="divider">/</span>
-        </li>
+        @endforeach
         <li class="active">
-            Veld &amp; duin
+            {{{ $bread_title }}}
         </li>
     </ul>
 @endsection
