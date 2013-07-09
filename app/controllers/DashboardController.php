@@ -97,9 +97,10 @@ class DashboardController extends BaseController {
                 
 
                 // Check cache first for reverse geo
-                if ($place = Cache::section('geo')->get($event->location))
+                // http://schema.org/addressLocality
+                if ($addressLocality = Cache::section('geo')->get($event->location))
                 {
-                    $event->place = $place;
+                    $event->addressLocality = $addressLocality;
                 }
                 else
                 {
@@ -115,11 +116,11 @@ class DashboardController extends BaseController {
                     $geo_result = $geocoder->reverse($geo[0], $geo[1]);
 
                     $formatter = new \Geocoder\Formatter\Formatter($geo_result);
-                    $event->place = $formatter->format('%S %n, %z %L');
+                    $event->addressLocality = $formatter->format('%S %n, %z %L');
 
 
                     // Cache reverse geo forever
-                    Cache::section('geo')->forever($event->location, $event->place);
+                    Cache::section('geo')->forever($event->location, $event->addressLocality);
                 }
 
 

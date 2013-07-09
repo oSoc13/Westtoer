@@ -21,9 +21,32 @@ class EventController extends \BaseController {
 		    $event->startDate    = $this->retrieve_value($raw_event,'http://schema.org/startDate');
 		    $event->endDate      = $this->retrieve_value($raw_event,'http://schema.org/endDate');
 
-            $location = explode('/', $event->location);
-            $geo = explode(',', array_pop($location));
-            //$event->place = $geocoder->reverse($geo[0], $geo[1]);
+            // Check cache first for reverse geo
+            // http://schema.org/addressLocality
+            if ($addressLocality = Cache::section('geo')->get($event->location))
+            {
+                $event->addressLocality = $addressLocality;
+            }
+            else
+            {
+                $location = explode('/', $event->location);
+                $geo = explode(',', array_pop($location));
+                
+                $adapter  = new \Geocoder\HttpAdapter\GuzzleHttpAdapter();
+                $geocoder = new \Geocoder\Geocoder();
+                $geocoder->registerProviders(array(
+                     new \Geocoder\Provider\OpenStreetMapsProvider($adapter)
+                 ));
+                
+                $geo_result = $geocoder->reverse($geo[0], $geo[1]);
+
+                $formatter = new \Geocoder\Formatter\Formatter($geo_result);
+                $event->addressLocality = $formatter->format('%S %n, %z %L');
+
+
+                // Cache reverse geo forever
+                Cache::section('geo')->forever($event->location, $event->addressLocality);
+            }
 		    if( $this->is_event($event) ){
 		        // use 'unique' events based on name
 		        $eventlist[$event->name] = $event;

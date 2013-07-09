@@ -38,7 +38,7 @@
                             {{{ $event->name }}}
                             <br>
                             <small>
-                                {{ $event->place }}
+                                {{ $event->addressLocality }}
                             </small>
                         </td>
                         <td>
