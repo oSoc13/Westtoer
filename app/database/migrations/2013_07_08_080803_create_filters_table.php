@@ -31,6 +31,7 @@ class CreateFiltersTable extends Migration {
                 Filter::ATTRACTION,
             );
             $table->enum('type', $contenttypes)->default($contenttypes[0]);
+            $table->string('item_id');
             
             $table->integer('screen_id'); 
 

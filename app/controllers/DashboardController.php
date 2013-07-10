@@ -111,36 +111,6 @@ class DashboardController extends BaseController {
                 $event->provider     = $provider; // http://westtoer.be/voc/provider
                 $event->addressLocality = " ";
 
-
-                // Check cache first for reverse geo
-                // http://schema.org/addressLocality -> include in datahub?
-                // $location = explode('/', $event->location);
-                // $location = array_pop($location);
-                // if ($addressLocality = Cache::section('geo')->get($location))
-                // {
-                //     $event->addressLocality = $addressLocality;
-                // }
-                // else
-                // {
-                //     $geo = explode(',', $location);
-                    
-                //     $adapter  = new \Geocoder\HttpAdapter\GuzzleHttpAdapter();
-                //     $geocoder = new \Geocoder\Geocoder();
-                //     $geocoder->registerProviders(array(
-                //          new \Geocoder\Provider\OpenStreetMapsProvider($adapter)
-                //      ));
-                    
-                //     $geo_result = $geocoder->reverse($geo[0], $geo[1]);
-
-                //     $formatter = new \Geocoder\Formatter\Formatter($geo_result);
-                //     $event->addressLocality = $formatter->format('%S %n, %z %L');
-
-
-                //     // Cache reverse geo forever
-                //     Cache::section('geo')->forever($location, $event->addressLocality);
-                // }
-
-
                 if( $this->is_event($event) ){
                     // use 'unique' events based on name
                     $eventlist[$event->name] = $event;

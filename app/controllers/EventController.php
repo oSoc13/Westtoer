@@ -19,57 +19,8 @@ class EventController extends \BaseController {
         {
             $raw_events = Hub::get($provider."/Events.json");
 
-            foreach ($raw_events as $key => $raw_event) {
-                $event               = new Event();
-                //$event->identifier = $this->retrieve_value($raw_event,'http://purl.org/dc/terms/identifier');
-                $event->name         = $this->retrieve_value($raw_event,'http://schema.org/name');
-                $event->image        = $this->retrieve_value($raw_event,'http://schema.org/image');
-                $event->location     = $this->retrieve_value($raw_event,'http://schema.org/location');
-                $event->startDate    = $this->retrieve_value($raw_event,'http://schema.org/startDate');
-                $event->endDate      = $this->retrieve_value($raw_event,'http://schema.org/endDate');
-                $event->provider     = $provider; // http://westtoer.be/voc/provider
-                $event->addressLocality = " ";
+            $events = EventParser::getEvents($raw_events);
 
-                // Check cache first for reverse geo
-                // http://schema.org/addressLocality -> include in datahub?
-
-                // $location = explode('/', $event->location);
-                // $location = array_pop($location);
-                // if ($addressLocality = Cache::section('geo')->get($location))
-                // {
-                //     $event->addressLocality = $addressLocality;
-                // } else
-                // {
-                //     $geo = explode(',', $location);
-                    
-                //     $adapter  = new \Geocoder\HttpAdapter\GuzzleHttpAdapter();
-                //     $geocoder = new \Geocoder\Geocoder();
-                //     $geocoder->registerProviders(array(
-                //          new \Geocoder\Provider\OpenStreetMapsProvider($adapter)
-                //      ));
-
-                //     try {
-                //      $geo_result = $geocoder->reverse($geo[0], $geo[1]);
-                //      $formatter = new \Geocoder\Formatter\Formatter($geo_result);
-                //      $event->addressLocality = $formatter->format('%S %n, %z %L');
-                   //      // Cache reverse geo forever
-                   //      Cache::section('geo')->forever($location, $event->addressLocality);
-                //     } catch (Exception $e) {
-                //      $event->addressLocality = " ";
-                //     }
-                    
-                // }
-                if( $this->is_event($event) ){
-                    // use 'unique' events based on name
-                    $eventlist[$event->name] = $event;
-                }
-            }
-
-            foreach( $eventlist as $key => $value) {
-                $events[] = $value;
-            }
-
-            Cache::section('hub')->put($provider . 'events_parsed', $events, 60*15);
             return array_slice($events , 0, 10);
         }
     }
