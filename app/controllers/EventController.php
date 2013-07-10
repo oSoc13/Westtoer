@@ -14,7 +14,7 @@ class EventController extends \BaseController {
 
         if ($events = Cache::section('hub')->get($provider .'events_parsed'))
         {
-            return $events;
+            return array_slice($events , 0, 10);
         } else
         {
             $raw_events = Hub::get($provider."/Events.json");
@@ -70,8 +70,7 @@ class EventController extends \BaseController {
             }
 
             Cache::section('hub')->put($provider . 'events_parsed', $events, 60*15);
-
-            return $events;
+            return array_slice($events , 0, 10);
         }
     }
 
