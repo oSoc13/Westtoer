@@ -1,0 +1,148 @@
+<!DOCTYPE HTML> 
+<html>
+<head>
+<title>Events</title>
+<style type="text/css">
+
+/* google fonts */
+@import url(http://fonts.googleapis.com/css?family=Raleway:600);
+
+html,body { 
+  height: 100%; 
+  margin: 0px; 
+  padding: 0px;
+  font-family: 'Raleway', sans-serif;
+}
+/* Swipe 2 required styles */
+
+.swipe {
+  overflow: hidden;
+  visibility: hidden;
+  position: relative;
+  height: 100%;
+}
+.swipe-wrap {
+  overflow: hidden;
+  position: relative;
+  height: 100%;
+}
+.swipe-wrap > div {
+  float:left;
+  width:100%;
+  position: relative;
+}
+
+
+.swipe-wrap div {
+  text-align:center;
+  height: 100%;
+  width: 100%;
+  margin:0;
+  padding:0;
+}
+
+/* END required styles */
+
+.slide {
+  opacity:0.8;
+  filter:alpha(opacity=80);
+  background-size:cover !important;
+}
+
+.slide div {
+  height:auto;
+}
+
+.sideshow .panel {
+  width: 30%;
+  height: 100%;
+  color: #ffffff;
+  text-align: center;
+
+
+  /* background gradient stuff */
+  background: -moz-linear-gradient(left, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.48) 61%, rgba(0,0,0,0) 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(0,0,0,0.65)), color-stop(61%,rgba(0,0,0,0.48)), color-stop(100%,rgba(0,0,0,0))); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(left, rgba(0,0,0,0.65) 0%,rgba(0,0,0,0.48) 61%,rgba(0,0,0,0) 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(left, rgba(0,0,0,0.65) 0%,rgba(0,0,0,0.48) 61%,rgba(0,0,0,0) 100%); /* Opera 11.10+ */
+background: -ms-linear-gradient(left, rgba(0,0,0,0.65) 0%,rgba(0,0,0,0.48) 61%,rgba(0,0,0,0) 100%); /* IE10+ */
+background: linear-gradient(to right, rgba(0,0,0,0.65) 0%,rgba(0,0,0,0.48) 61%,rgba(0,0,0,0) 100%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', endColorstr='#00000000',GradientType=1 ); /* IE6-9 */
+}
+
+.sideshow .panel div {
+  margin: auto;
+  border-bottom: 2px solid #cccccc;
+}
+
+.sideshow .panel .name {
+  display:block;
+  width: 60%;
+  padding: 5%;
+}
+
+.sideshow .panel .date {
+  display:block;
+  width: 60%;
+  padding: 5%;
+}
+
+.sideshow .panel .date h2 {
+  font-size: 250%;
+  width:120px;
+  margin: auto;
+}
+
+</style>
+
+</head>
+  <body>
+    <div id='slider' class='swipe'>
+      <div class='swipe-wrap'>
+      </div>
+    </div>
+
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type="text/javascript" src='swipe.js'></script>
+    <script type="text/javascript">
+        function loadEvents(){
+            $.getJSON('event.examples.json', function(data) {
+              $.each(data, function(key, wt_event) {
+               
+                var item = [];
+                // quick and dirty mode
+
+                slide = $('<div/>', {
+                  'class': 'slide sideshow',
+                  'style': 'background-image: url("' + wt_event['image'] + '"); '
+                });
+
+                panel = $('<div/>', {'class': 'panel'});
+                namediv = $('<div/>', {'class': 'name'});
+                name = $('<h1/>', {'text':  wt_event['name']}).appendTo(namediv);
+                namediv.appendTo(panel);
+                
+
+                datediv = $('<div/>', {'class': 'date'});
+                date = $('<h2/>', {'text':  wt_event['startDate']}).appendTo(datediv);
+                datediv.appendTo(panel);
+
+                panel.appendTo(slide);
+
+                slide.appendTo('.swipe-wrap');
+
+              });
+            })
+            $(window).trigger("resize");
+            new Swipe(document.getElementById('slider'), {
+              startSlide: 0,
+              speed: 600,
+              auto: 1500,
+              //auto: 9000,
+              continuous: true
+            });
+        };
+        $(document).ready(loadEvents);
+    </script>
+  </body>
+</html>
