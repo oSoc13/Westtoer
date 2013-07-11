@@ -24,9 +24,9 @@ class ScreenTableSeeder extends Seeder {
 
         Screen::create(
         	array('name' => 'Veld en duin',
-        		  'location' => 'Brugge',
-        		  'long' => '2.93',
-        		  'lat' => '51.23',
+        		  'location' => 'Bredene',
+        		  'long' => '2.9667',
+        		  'lat' => '51.2333',
         		  'radius' => '15')
         );
 
