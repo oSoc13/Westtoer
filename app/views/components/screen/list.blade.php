@@ -31,8 +31,8 @@
                             {{{ $event->startDate }}}
                             <br>
                             <small>
-                                {{{ $event->provider }}}
-                                <!--$event->timeInfo-->
+                                {{{ $event->startTime }}}
+                                {{{ $event->endTime }}}
                             </small>
                         </td>
                         <td>

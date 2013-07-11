@@ -5,8 +5,9 @@
   </head>
   <body>
     @yield('navbar')
-    @yield('breadcrumbs')
     <div class="container">
+        @yield('breadcrumbs')
+        @yield('messages')
         @yield('content')
     </div>
     <!--style>

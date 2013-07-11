@@ -1,5 +1,7 @@
 @layout('layouts.dashboard.home')
-@section('settings')
+@section('settings') 
+        {{ Form::open(array('url' => '/ui/screen/'. $screen_id, 'method' => 'post')) }}
+        <input type="hidden" name="screen_id" value="{{{ $screen_id }}}">
         <div class="well">
             <h3>
                 {{{ $name }}} settings
@@ -12,7 +14,7 @@
                             Location
                         </label>
                         <div class="controls">
-                            <input type="text" placeholder="Bruges" value="{{{ $location }}}">
+                            <input type="text" name="location" placeholder="Bruges" value="{{{ $location }}}">
                         </div>
                     </div>
                     <p>
@@ -23,11 +25,11 @@
                             Radius
                         </label>
                         <div class="controls">
-                            <input type="text" class="span2" placeholder="15" value="{{{ $radius }}}">
+                            <input type="text" class="span2" name="radius" placeholder="15" value="{{{ $radius }}}">
                         </div>
                     </div>
                 </div>
-                <div class="span6">
+                <!--div class="span6">
                     <div class="control-group">
                         <label class="control-label">
                             <i class="icon-list-alt"></i>
@@ -47,7 +49,12 @@
                             </select>
                         </div>
                     </div>
-                </div>
+                </div-->
             </div>
+
+            <button type="submit" class="btn btn-inverse">
+                Save settings
+            </button>
         </div>
+        {{ Form::token() . Form::close() }}
 @endsection
