@@ -1,6 +1,6 @@
 <?php
 
-class EventFilter extends Eloquent{
+class ItemFilter extends Eloquent{
 
 
 	/**
@@ -11,13 +11,7 @@ class EventFilter extends Eloquent{
 	protected $table = 'filters';
 	protected $guarded = array();
 
-
-	/**
-	 * Enums for Filtertypes
-	 * 
-	 */
-	const EVENT = 0;
-	const ATTRACTION = 1;
+	
 
 	public function screen()
 	{

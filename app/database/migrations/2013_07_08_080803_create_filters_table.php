@@ -26,11 +26,11 @@ class CreateFiltersTable extends Migration {
              | ATTRACTION
              |
              */
-            $contenttypes = array(
+            /*$contenttypes = array(
                 EventFilter::EVENT,
                 EventFilter::ATTRACTION,
             );
-            $table->enum('type', $contenttypes)->default($contenttypes[0]);
+            $table->enum('type', $contenttypes)->default($contenttypes[0]);*/
             $table->string('item_id');
             
             $table->integer('screen_id'); 
@@ -47,7 +47,9 @@ class CreateFiltersTable extends Migration {
              |  -0.5: less important
              |
              */
-            $table->float('score')->default(0);
+            $table->float('score')
+                  ->default(0)
+                  ->nullable();
 
         });
     }

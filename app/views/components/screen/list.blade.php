@@ -43,9 +43,9 @@
                             </small>
                         </td>
                         <td>
-                            <i class="icon-thumbs-up"></i>
-                            <i class="icon-thumbs-down"></i>
-                            <i class="icon-remove"></i>
+                            <a href="{{ URL::to('/ui/thumbs-up/' . $screen_id . '/'. urlencode ($event->name)) }}"><i class="icon-thumbs-up"></i></a>
+                            <a href="{{ URL::to('/ui/thumbs-down/' . $screen_id . '/'. urlencode ($event->name)) }}"><i class="icon-thumbs-down"></i></a>
+                            <a href="{{ URL::to('/ui/remove/' . $screen_id . '/'. urlencode ($event->name)) }}"><i class="icon-remove"></i></a>
                         </td>
                     </tr>
                     @endforeach

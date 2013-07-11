@@ -21,5 +21,13 @@ Route::get('/', function()
 Route::resource('/api/event', 'EventController', array('only' => array('index', 'show')));
 Route::controller('/api', 'APIController');
 
+/**
+ * Dashboard
+ */
 Route::get('/ui/screen/{id}', 'DashboardController@buildDashboard');
 Route::post('/ui/screen/{id}', array('before' => 'csrf', 'uses' => 'DashboardController@postSettings'));
+
+
+Route::get('/ui/thumbs-up/{screen_id}/{event_name}', 'DashboardController@thumbsUp');
+Route::get('/ui/thumbs-down/{screen_id}/{event_name}', 'DashboardController@thumbsDown');
+Route::get('/ui/remove/{screen_id}/{event_name}', 'DashboardController@remove');

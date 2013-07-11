@@ -7,15 +7,11 @@ class DashboardController extends BaseController {
     | Default Dashboard Controller
     |--------------------------------------------------------------------------
     |
-    | You may wish to use controllers instead of, or in addition to, Closure
-    | based routes. That's great! Here is an example controller method to
-    | get you started. To route to this controller, just add the route:
-    |
-    |   Route::get('/', 'DashboardController@showHome');
-    |
     */
 
     protected $layout = 'layouts.dashboard.home';
+
+    private $ttl = 1800;
     private $screen;
     private $errors   = array();
     private $alerts   = array();
@@ -100,10 +96,8 @@ class DashboardController extends BaseController {
          * Building list
          */
 
-        $win_events  = $this->getEvents('WIN');
-        $uitdb_events  = $this->getEvents('UITDB');
-        $events = array_merge ($win_events, $uitdb_events);
-        $matched_events = $this->matchFilters($events);
+        $matched_events = $this->getList();
+
         $list = array(
             'screen_id' => $this->screen->id,
             'events'  => $matched_events
@@ -129,9 +123,20 @@ class DashboardController extends BaseController {
         $this->buildDashboard($screen->id);
     }
 
+    private function getList(){
+        $win_events     = $this->getEvents('WIN');
+        $uitdb_events   = $this->getEvents('UITDB');
+        $events         = array_merge($win_events, $uitdb_events);
+        $matched_events = $this->matchFilters($events);
+        Cache::section('matched_events')->put($this->screen->id, $matched_events, 60);
+        return $matched_events;
+    }
+
     private function matchFilters($events){
         $filters = $this->screen->filters();
-        $matched_events = array();
+        $matched_events;
+
+        // for each event, find corresponding filter.
         foreach ($events as $key => $event) {
             $found = false;
             foreach ($filters as $key => $filter) {
@@ -142,28 +147,53 @@ class DashboardController extends BaseController {
                 }
             }
             if(!$found){
-                /* create all dem stuff
-                   for testing purposes only.
-
-                $filter = new EventFilter(
-                    array( 'item_id' => $event->name,
-                           'screen_id' => $this->screen->id,
-                           'score' => 0
-                    )
-                );
-
-                $filter->save();
-                $event->score = $filter->score;
-            
-                */
                 $event->score = 0;
             }
-            array_push($matched_events, $event);
+            $matched_events[$event->name] = $event;
         }
         return $matched_events;
     }
 
+    private function setScore($screen_id, $event_name, $score){
+        $event_name = urldecode($event_name);
+        if (! $matched_events = Cache::section('matched_events')->get($screen_id))
+        {
+            $matched_events = $this->getList();
+        }
+        $event = $matched_events[$event_name];
+        $event->score = $score;
 
+        $this->screen = Screen::find($screen_id);
+        if($filter = $this->screen->filters()->where('item_id', $event_name)->first()){
+            $filter->score = $score;
+            $filter->save();
+        } else {
+            $filter = new ItemFilter(
+                    array( 'item_id' => $event_name,
+                           'screen_id' => $screen_id,
+                           'score' => $score
+                    )
+                );
+             $filter->save();
+        }
+        Cache::section('matched_events')->put($screen_id, $matched_events, 60);
+        $message = '<strong>' . $event_name . '</strong> is now ';
+        switch ($score) {
+            case -1:
+                $message .= 'excluded from screen';
+                break;
+            case -0.5:
+                $message .= 'marked as less important for screen';
+                break;
+            case 1:
+                $message .= 'marked as important for screen';
+                break;
+        }
+        $this->addAlert($event_name.' modified!', $message);
+        $this->buildDashboard($screen_id);
+    }
+
+    //TODO: remove provider when datahub is completed
     private function getEvents($provider = 'WIN', $limit = -1) // UITDB or WIN
     {
         if ($events = Cache::section('origin')->get('events_parsed'))
@@ -175,11 +205,23 @@ class DashboardController extends BaseController {
             $raw_events = Hub::get($provider."/Events.json");
 
             $events = EventParser::getEvents($raw_events);
-            Cache::section('origin')->put('events_parsed', $events, 60);
+            Cache::section('origin')->put('events_parsed', $events, $this->ttl);
 
             return $events;
         }
-        return $events;
+    }
+
+    public function thumbsUp($screen_id, $event_name)
+    {
+        $this->setScore($screen_id, $event_name, 1);
+    }
+    public function thumbsDown($screen_id, $event_name)
+    {
+        $this->setScore($screen_id, $event_name, -0.5);
+    }
+    public function remove($screen_id, $event_name)
+    {
+        $this->setScore($screen_id, $event_name, -1);
     }
 
 }
