@@ -9,6 +9,7 @@ class EventFilter extends Eloquent{
 	 * @var string
 	 */
 	protected $table = 'filters';
+	protected $guarded = array();
 
 
 	/**
@@ -20,7 +21,7 @@ class EventFilter extends Eloquent{
 
 	public function screen()
 	{
-	    return $this->belongs_to('Screen','screen_id');
+	    return $this->belongsTo('Screen');
 	}
 
 }

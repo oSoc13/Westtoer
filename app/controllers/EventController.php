@@ -10,18 +10,21 @@ class EventController extends \BaseController {
     public function index()
     {
         // http://westtoer.be/voc/provider
+        // TODO: remove $provider -> in hub settings set mixed feed.
         $provider = "UITDB"; // "WIN";
 
-        if ($events = Cache::section('hub')->get($provider .'events_parsed'))
+        if ($events = Cache::section('parsed')->get('events_parsed'))
         {
-            return array_slice($events , 0, 10);
+            return $events; //array_slice($events , 0, 10);
         } else
         {
             $raw_events = Hub::get($provider."/Events.json");
 
             $events = EventParser::getEvents($raw_events);
 
-            return array_slice($events , 0, 10);
+            Cache::section('parsed')->put('events_parsed', $events, 60);
+
+            return $events; //array_slice($events , 0, 10);
         }
     }
 

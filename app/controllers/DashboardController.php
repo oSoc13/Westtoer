@@ -16,11 +16,30 @@ class DashboardController extends BaseController {
     */
 
     protected $layout = 'layouts.dashboard.home';
+    private $screen;
+    private $errors   = array();
+    private $alerts   = array();
 
-    public function showHome($id)
+
+    public function addError($title, $details){
+
+        $message = array('title'   => $title,
+                         'details' => $details);
+        
+        array_push($this->errors , $message);
+    }
+
+    public function addAlert($title, $details){
+        $message = array('title'   => $title,
+                         'details' => $details);
+        
+        array_push($this->alerts , $message);
+    }
+
+    public function buildDashboard($id)
     {
-        $screen = Screen::find($id);
-        $title  = "Dashboard - " . $screen->location;
+        $this->screen = Screen::find($id);
+        $title  = "Dashboard - " . $this->screen->location;
 
 
         $this->layout->head         = View::make('components.head')->with('title', $title);
@@ -31,7 +50,7 @@ class DashboardController extends BaseController {
          * Building breadcrumbs
          */
         $breadcrumbs = array(
-            'bread_title' =>  $screen->name,
+            'bread_title' =>  $this->screen->name,
             'bread_items' => array(
                 array('name' => 'Username', 'uri' => '/ui'),
                 array('name' => 'Screens', 'uri' => '/ui/screen/' . $id )
@@ -40,12 +59,24 @@ class DashboardController extends BaseController {
         $this->layout->breadcrumbs   = View::make('components.breadcrumbs', $breadcrumbs);
         
         /**
+         * Building messages
+         */
+
+        $messages = array(
+            'errors' => $this->errors,
+            'alerts' => $this->alerts
+        );
+
+        $this->layout->messages  = View::make('components.messages', $messages);
+
+        /**
          * Building settings
          */
         $settings = array(
-            'location' => $screen->location,
-            'name'     => $screen->name,
-            'radius'   => $screen->radius
+            'screen_id' => $this->screen->id,
+            'location' => $this->screen->location,
+            'name'     => $this->screen->name,
+            'radius'   => $this->screen->radius
         );
 
         $this->layout->settings  = View::make('components.screen.settings', $settings);
@@ -72,26 +103,70 @@ class DashboardController extends BaseController {
         $win_events  = $this->getEvents('WIN');
         $uitdb_events  = $this->getEvents('UITDB');
         $events = array_merge ($win_events, $uitdb_events);
-
-        $filters = $this->getFilters($screen);
-
+        $matched_events = $this->matchFilters($events);
         $list = array(
-            'events'  => $events,
-            'filters' => $filters
+            'screen_id' => $this->screen->id,
+            'events'  => $matched_events
         );
 
         $this->layout->list = View::make('components.screen.list', $list);
     }
 
-    private function getFilters($screen){
-        $filters = EventFilter::find($screen);
-        return $filters;
+    public function postSettings()
+    {
+        $this->screen = Screen::find(Input::get('screen_id'));
+        $this->screen->location = Input::get('location');
+        $this->screen->radius = Input::get('radius');
+        $this->screen->save();
+
+        $message  = '<ul>';
+        $message .= '<li> Location: '. $this->screen->location .'</li>';
+        $message .= '<li> Radius: '. $this->screen->radius .'</li>';
+        $message .= '<ul>';
+        $this->addAlert('Screen settings saved', $message);
+
+
+        $this->buildDashboard($screen->id);
     }
+
+    private function matchFilters($events){
+        $filters = $this->screen->filters();
+        $matched_events = array();
+        foreach ($events as $key => $event) {
+            $found = false;
+            foreach ($filters as $key => $filter) {
+                if($event->name == $filter->item_id){
+                    //$event->score = $filter->score;
+                    $found = true;
+                    break; // yes @pietercolpaert, it's a break!
+                }
+            }
+            if(!$found){
+                /* create all dem stuff
+                   for testing purposes only.
+
+                $filter = new EventFilter(
+                    array( 'item_id' => $event->name,
+                           'screen_id' => $this->screen->id,
+                           'score' => 0
+                    )
+                );
+
+                $filter->save();
+                $event->score = $filter->score;
+            
+                */
+                $event->score = 0;
+            }
+            array_push($matched_events, $event);
+        }
+        return $matched_events;
+    }
+
 
     private function getEvents($provider = 'WIN', $limit = -1) // UITDB or WIN
     {
-
-        if ($events = Cache::section('hub')->get($provider .'events_parsed'))
+        if ($events = Cache::section('origin')->get('events_parsed'))
         {
             return $events;
         } 
@@ -99,56 +174,12 @@ class DashboardController extends BaseController {
         {
             $raw_events = Hub::get($provider."/Events.json");
 
-            foreach ($raw_events as $key => $raw_event) {
-                $event               = new Event();
-                //$event->identifier   = $this->retrieve_value($raw_event,'http://purl.org/dc/terms/identifier');
-                $event->name         = $this->retrieve_value($raw_event,'http://schema.org/name');
-                $event->image        = $this->retrieve_value($raw_event,'http://schema.org/image');
-                $event->location     = $this->retrieve_value($raw_event,'http://schema.org/location');
-                $event->startDate    = $this->retrieve_value($raw_event,'http://schema.org/startDate');
-                $event->endDate      = $this->retrieve_value($raw_event,'http://schema.org/endDate');
-                $event->timeInfo     = $this->retrieve_value($raw_event,'http://westtoer.be/voc/calendar_summary');
-                $event->provider     = $provider; // http://westtoer.be/voc/provider
-                $event->addressLocality = " ";
-
-                if( $this->is_event($event) ){
-                    // use 'unique' events based on name
-                    $eventlist[$event->name] = $event;
-                }
-            }
-
-            foreach( $eventlist as $key => $value) {
-                $events[] = $value;
-            }
-
-            Cache::section('hub')->put($provider .'events_parsed', $events, 60*15);
+            $events = EventParser::getEvents($raw_events);
+            Cache::section('origin')->put('events_parsed', $events, 60);
 
             return $events;
         }
-    }
-
-
-
-    private function retrieve_value($array, $key){
-        /* Checks if value is set and returns the value, if value is not set, return null.
-         * @param array
-         * @param key
-         * @return value if set, null if not set.
-         */
-
-        return isset($array[$key]) ? $array[$key][0]['value'] : null;
-    }
-
-    private  function is_event($event){
-        // if event has no values, returns false to drop it. 
-        // Allowed number of null values can be set through base_score.
-        $base_score = -1; 
-        $score = 0;
-        foreach ($event as $key => $value) {
-            if( $value == null )
-                $score--;
-        }
-        return $score >= $base_score;
+        return $events;
     }
 
 }

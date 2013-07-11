@@ -27,8 +27,8 @@ class CreateFiltersTable extends Migration {
              |
              */
             $contenttypes = array(
-                Filter::EVENT,
-                Filter::ATTRACTION,
+                EventFilter::EVENT,
+                EventFilter::ATTRACTION,
             );
             $table->enum('type', $contenttypes)->default($contenttypes[0]);
             $table->string('item_id');

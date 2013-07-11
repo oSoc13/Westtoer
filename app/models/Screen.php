@@ -9,6 +9,7 @@ class Screen extends Eloquent{
 	 * @var string
 	 */
 	protected $table = 'screens';
+	protected $guarded = array();
 
 
 	/**
@@ -16,7 +17,7 @@ class Screen extends Eloquent{
 	 */
 	public function filters()
     {
-        return $this->has_many('Filter');
+        return $this->hasMany('EventFilter');
     }
 
 }
