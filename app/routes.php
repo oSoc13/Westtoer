@@ -11,12 +11,15 @@
 |
 */
 
+
 Route::get('/', function()
 {
     return 'Hello World';
 });
 
+
 Route::resource('/api/event', 'EventController', array('only' => array('index', 'show')));
 Route::controller('/api', 'APIController');
 
-Route::get('/ui/screen/{id}', 'DashboardController@showHome');
+Route::get('/ui/screen/{id}', 'DashboardController@buildDashboard');
+Route::post('/ui/screen/{id}', array('before' => 'csrf', 'uses' => 'DashboardController@postSettings'));
