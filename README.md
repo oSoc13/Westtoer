@@ -66,7 +66,7 @@ Adjust the ```connections``` array with the database server details.
 
 Adjust the ```driver``` value to select the desired caching method.
 
-** Note **: ```file``` does not support caching in sections and cannot be used.
+** Note ** ```file``` does not support caching in sections and cannot be used.
 
 ##### example
 ```
