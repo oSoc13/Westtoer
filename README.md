@@ -119,7 +119,7 @@ In the project root, run:
 php artisan migrate:refresh
 ```
 
-If your using multiple environments, add the corresponding environment
+If you are using multiple environments, add the corresponding environment
 
 ```
 php artisan --env=development migrate:refresh
