@@ -35,6 +35,6 @@ Thumbs.db
 ######################
 # Ignore deploy info #
 ######################
-/backup
-/log
-private
+backup/
+log/
+private/
