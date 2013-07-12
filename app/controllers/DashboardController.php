@@ -53,7 +53,7 @@ class DashboardController extends BaseController {
         $breadcrumbs = array(
             'bread_title' =>  $this->screen->name,
             'bread_items' => array(
-                array('name' => 'Username', 'uri' => '/ui'),
+                array('name' => 'Dashboard', 'uri' => '/ui'),
                 array('name' => 'Screens', 'uri' => '/ui/screen/' . $id )
             )
         ); 

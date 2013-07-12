@@ -12,7 +12,6 @@ class EventController extends \BaseController {
      */
     public function index()
     {
-        $this->screen = Screen::find($id);
 
         // http://westtoer.be/voc/provider
         // TODO: remove $provider -> in hub settings set mixed feed.
@@ -20,7 +19,7 @@ class EventController extends \BaseController {
 
         if ($events = Cache::section('parsed')->get('events_parsed'))
         {
-            return $events; //array_slice($events , 0, 10);
+            return $events;
         } else
         {
             $raw_events = Hub::get($provider."/Events.json");
@@ -64,11 +63,16 @@ class EventController extends \BaseController {
     public function show($id)
     {
         $this->screen = Screen::find($id);
-
-        $events = $this->sortList($this->getList());
-
-
-        return $events;
+        if ($events = Cache::section('screen_output')->get($id))
+        {
+            return $events;
+        } 
+        else
+        {
+            $events = $this->sortList($this->getList());
+            Cache::section('screen_output')->put($id, $events, 360);
+            return $events;
+        }
     }
 
     private function sortList($events){
@@ -88,7 +92,6 @@ class EventController extends \BaseController {
                 }
             }
         );
-
 
         return $events;
     }

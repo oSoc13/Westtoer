@@ -9,7 +9,7 @@ class Screen extends Eloquent{
 	 * @var string
 	 */
 	protected $table = 'screens';
-	//protected $guarded = array();
+	protected $guarded = array();
 
 
 	/**

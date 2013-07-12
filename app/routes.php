@@ -12,19 +12,19 @@
 */
 
 
-Route::get('/', function()
-{
-    return 'Hello World';
-});
+Route::get('/', 'IndexController@index');
 
 Route::resource('/api/event', 'EventController', array('only' => array('index', 'show')));
 Route::controller('/api', 'APIController');
 
 /**
- * Dashboard
+ * Dashboard & UI
  */
+Route::get('/ui', 'OverviewController@getOverview');
+Route::post('/ui/create/screen', 'OverviewController@createScreen');
 Route::get('/ui/screen/{id}', array('as' => 'screen', 'uses' => 'DashboardController@buildDashboard'));
 Route::post('/ui/screen/{id}', array('before' => 'csrf', 'uses' => 'DashboardController@postSettings'));
+
 
 
 Route::get('/ui/thumbs-up/{screen_id}/{event_name}', 'DashboardController@thumbsUp');

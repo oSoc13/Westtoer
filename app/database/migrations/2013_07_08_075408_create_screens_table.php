@@ -18,8 +18,8 @@ class CreateScreensTable extends Migration {
             $table->increments('id');
             $table->string('name');
             $table->string('location');
-            $table->float('long');
-            $table->float('lat');
+            $table->float('lat',15,10);
+            $table->float('long',15,10);
             $table->integer('radius')->default(15);
         });
     }

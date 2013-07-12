@@ -8,20 +8,14 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="brand" href="screen-5044bcb9b9.html">oSoc13 Westtoer</a>
+                <a class="brand" href="{{{ URL::to('/ui/') }}}">oSoc13 Westtoer</a>
                 <div class="nav-collapse collapse" style="height: 0px;">
                     <ul class="nav">
-                        <li>
-                            <a href="#">Dashboard</a>
-                        </li>
-                        <li>
-                            <a href="#profile">My Profile</a>
-                        </li>
                         <li class="active">
-                            <a href="#screens">Screens</a>
+                            <a href="/ui">Dashboard</a>
                         </li>
                         <li>
-                            <a href="#help">Help</a>
+                            <a href="/api">API Help</a>
                         </li>
                     </ul>
                 </div>
