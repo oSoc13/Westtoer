@@ -2,13 +2,18 @@
 
 class EventController extends \BaseController {
 
+    private $ttl = 1800;
+    private $screen;
+
     /**
      * Display a listing of the resource.
      *
      * @return Response
      */
-    public function index()
+    public function index($id)
     {
+        $this->screen = Screen::find($id);
+
         // http://westtoer.be/voc/provider
         // TODO: remove $provider -> in hub settings set mixed feed.
         $provider = "UITDB"; // "WIN";
@@ -24,7 +29,7 @@ class EventController extends \BaseController {
 
             Cache::section('parsed')->put('events_parsed', $events, 60);
 
-            return $events; //array_slice($events , 0, 10);
+            return $events;
         }
     }
 

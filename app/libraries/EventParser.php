@@ -15,6 +15,7 @@ class EventParser {
         foreach ($raw_events as $key => $raw_event) {
             $event                  = new Event();
             $event->name            = EventParser::retrieve_value($raw_event,'http://schema.org/name');
+            $event->name            = str_replace("/","-",$event->name);
             $event->image           = EventParser::retrieve_value($raw_event,'http://schema.org/image');
             $event->location        = EventParser::retrieve_value($raw_event,'http://schema.org/location');
             $event->startDate       = EventParser::retrieve_value($raw_event,'http://schema.org/startDate');

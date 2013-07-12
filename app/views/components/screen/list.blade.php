@@ -26,7 +26,16 @@
                         </th>
                     </tr>
                     @foreach ($events as $event)
+                    
+                    @if ($event->score == -1)
+                    <tr class="error">
+                    @elseif ($event->score == -0.5)
+                    <tr class="warning">
+                    @elseif ($event->score == 1)
+                    <tr class="success">
+                    @else
                     <tr>
+                    @endif
                         <td>
                             {{{ $event->startDate }}}
                             <br>
