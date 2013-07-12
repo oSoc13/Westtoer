@@ -20,14 +20,22 @@ class ScreenTableSeeder extends Seeder {
 
     public function run()
     {
-        //DB::table('screens')->delete();
+        DB::table('screens')->delete();
 
         Screen::create(
         	array('name' => 'Veld en duin',
         		  'location' => 'Bredene',
-        		  'long' => '2.9667',
-        		  'lat' => '51.2333',
+                  'lat' => '51.23818985',
+        		  'long' => '2.9734925473485',
         		  'radius' => '15')
+        );
+        DB::table('weather')->delete();
+        
+        Weather::create(
+            array('screen_id' => '1',
+                  'location' => 'Bredene',
+                  'lat' => '51.23818985',
+                  'long' => '2.9734925473485')
         );
 
 

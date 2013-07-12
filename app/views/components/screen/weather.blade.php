@@ -5,7 +5,7 @@
                 Weather settings
             </h3>
             {{ Form::open(array('url' => '/ui/weather/'.$screen_id, 'method' => 'post')) }}
-            <div class="control-group">
+            <div class="control-group hidden">
                 <div class="form-horizontal">
                     Show weather every&nbsp;
                     <input type="number" value="8" class="span1">
