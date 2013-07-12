@@ -2,7 +2,27 @@
 
 class IndexController extends \BaseController {
 
+	protected $layout = 'layouts.dashboard.index';
 
+	private $errors = array();
+	private $alerts = array();
+
+
+
+    public function addError($title, $details){
+
+        $message = array('title'   => $title,
+                         'details' => $details);
+        
+        array_push($this->errors , $message);
+    }
+
+    public function addAlert($title, $details){
+        $message = array('title'   => $title,
+                         'details' => $details);
+        
+        array_push($this->alerts , $message);
+    }
 
 	/**
 	 * Display a listing of the resource.
@@ -11,7 +31,33 @@ class IndexController extends \BaseController {
 	 */
 	public function index()
 	{
-		return 'bambam';
+		$title = 'Dashboard';
+        $this->layout->head         = View::make('components.head')->with('title', $title);
+
+        $this->layout->navbar       = View::make('components.navbar');
+
+        /**
+         * Building breadcrumbs
+         */
+        $breadcrumbs = array(
+            'bread_title' =>  $title,
+            'bread_items' => array(
+            )
+        ); 
+        $this->layout->breadcrumbs   = View::make('components.breadcrumbs', $breadcrumbs);
+        
+        /**
+         * Building messages
+         */
+
+        $messages = array(
+            'errors' => $this->errors,
+            'alerts' => $this->alerts
+        );
+
+        $this->layout->messages  = View::make('components.messages', $messages);
+
+		
 	}
 
 
