@@ -129,6 +129,7 @@ class DashboardController extends BaseController {
     }
 
     private function getList(){
+        //TODO: remove providers, only one getEvent needed.
         $win_events     = $this->getEvents('WIN');
         $uitdb_events   = $this->getEvents('UITDB');
         $events         = array_merge($win_events, $uitdb_events);
