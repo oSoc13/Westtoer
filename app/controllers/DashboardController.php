@@ -32,6 +32,11 @@ class DashboardController extends BaseController {
         array_push($this->alerts , $message);
     }
 
+    public function buildWithMessage($id, $title, $message){
+        $this->addAlert($title,$message);
+        $this->buildDashboard($id);
+    }
+
     public function buildDashboard($id)
     {
         $this->screen = Screen::find($id);
@@ -139,15 +144,10 @@ class DashboardController extends BaseController {
         // for each event, find corresponding filter.
         foreach ($events as $key => $event) {
             $found = false;
-            foreach ($filters as $key => $filter) {
-                if($event->name == $filter->item_id){
-                    //$event->score = $filter->score;
-                    $found = true;
-                    break; // yes @pietercolpaert, it's a break!
-                }
-            }
-            if(!$found){
-                $event->score = 0;
+            if($filter = $this->screen->filters()->where('item_id', $event->name)->first()){
+                $event->score = $filter->score;
+            } else {
+                $event->score =0;
             }
             $matched_events[$event->name] = $event;
         }
@@ -180,17 +180,20 @@ class DashboardController extends BaseController {
         $message = '<strong>' . $event_name . '</strong> is now ';
         switch ($score) {
             case -1:
-                $message .= 'excluded from screen';
+                $message .= 'excluded from this screen';
                 break;
             case -0.5:
-                $message .= 'marked as less important for screen';
+                $message .= 'marked as less important for this screen';
                 break;
             case 1:
-                $message .= 'marked as important for screen';
+                $message .= 'marked as important for this screen';
                 break;
         }
-        $this->addAlert($event_name.' modified!', $message);
+        $title = $event_name.' modified!';
+        $alert = array('title' => $title, 'message' => $message);
+        $this->addAlert($title, $message);
         $this->buildDashboard($screen_id);
+        //return Redirect::to('screen');
     }
 
     //TODO: remove provider when datahub is completed
