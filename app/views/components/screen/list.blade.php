@@ -45,7 +45,7 @@
                             </small>
                         </td>
                         <td>
-                            {{{ $event->name }}} ({{{ $event->score }}})
+                            {{{ $event->name }}}
                             <br>
                             <small>
                                 {{ $event->addressLocality }}
