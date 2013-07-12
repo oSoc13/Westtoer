@@ -20,4 +20,8 @@ class Screen extends Eloquent{
         return $this->hasMany('ItemFilter');
     }
 
+    public function weather(){
+        return $this->hasMany('Weather');
+    }
+
 }

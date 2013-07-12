@@ -21,6 +21,7 @@ class CreateScreensTable extends Migration {
             $table->float('lat',15,10);
             $table->float('long',15,10);
             $table->integer('radius')->default(15);
+            $table->string('picasaname')->nullable();
         });
     }
 

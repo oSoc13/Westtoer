@@ -85,12 +85,21 @@ class DashboardController extends BaseController {
         /**
          * Building weather
          */
-        $this->layout->weather   = View::make('components.screen.weather');
+        $weather_items = $this->screen->weather()->get();
+        $weather = array(
+            'screen_id' => $this->screen->id,
+            'locations' => $weather_items
+        );
+        $this->layout->weather   = View::make('components.screen.weather', $weather);
 
         /**
          * Building albums
          */
-        $this->layout->albums    = View::make('components.screen.albums');
+
+        $albums = array(
+            'screen_id' => $this->screen->id
+        );
+        $this->layout->albums    = View::make('components.screen.albums', $albums);
 
         /**
          * Building tags
@@ -126,6 +135,71 @@ class DashboardController extends BaseController {
 
 
         $this->buildDashboard($screen->id);
+    }
+
+    public function addWeather($screen_id){
+
+        $location = Input::get('weather_location');
+
+
+        $geocoder = new \Geocoder\Geocoder();
+        $adapter  = new \Geocoder\HttpAdapter\GuzzleHttpAdapter();
+        $chain    = new \Geocoder\Provider\OpenStreetMapsProvider($adapter);
+        $geocoder->registerProvider($chain);
+
+        try {
+            $geocode = $geocoder->geocode($location);
+            $lat     = $geocode->getLatitude();
+            $long    = $geocode->getLongitude();
+
+
+            $weather = new Weather(
+                        array( 'screen_id' => $screen_id,
+                               'location' => $location,
+                               'lat' => $lat,
+                               'long' => $long)
+                   );
+
+            $weather->save();
+
+            $message  = '<ul>';
+            $message .= '<li> Location: '. $location .'<small>('. $lat.','. $long .')</small></li>';
+            $message .= '<ul>';
+
+            $this->addAlert('Weather location added.',$message);
+        } catch (Exception $e) {
+            $this->addError('Weather location not added! Could not retrieve geolocation for '. $location,$e->getMessage());
+        }
+
+
+        
+
+
+        $this->buildDashboard($screen_id);
+
+    }
+
+
+    /*
+
+Route::post('/ui/picasa/{screen_id}', array('before' => 'csrf', 'uses' => 'DashboardController@setAlbums'));
+Route::post('/ui/weather/{screen_id}', array('before' => 'csrf', 'uses' => 'DashboardController@addWeather'));
+Route::get('/ui/weather/{screen_id}/{weather_id}/remove', array('before' => 'csrf', 'uses' => 'DashboardController@removeWeather'));
+    */
+
+    public function removeWeather($screen_id, $weather_id){
+
+        try {
+            $item = Weather::find($weather_id);
+            $item->delete();
+
+            $this->addAlert('Weather location ('. $weather_id .') removed.','');
+        } catch (Exception $e) {
+            $this->addError('Weather location ('. $weather_id .') could not be deleted', $e->getMessage());
+        }
+
+        $this->buildDashboard($screen_id);
+
     }
 
     private function getList(){

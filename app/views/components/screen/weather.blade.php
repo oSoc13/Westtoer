@@ -4,23 +4,22 @@
             <h3>
                 Weather settings
             </h3>
+            {{ Form::open(array('url' => '/ui/weather/'.$screen_id, 'method' => 'post')) }}
             <div class="control-group">
-                <div class="controls">
+                <div class="form-horizontal">
                     Show weather every&nbsp;
                     <input type="number" value="8" class="span1">
                     &nbsp;slides.
                 </div>
             </div>
-            <div class="control-group">
-                <form class="navbar-form form-horizontal">
-                    <input type="text" class="span3" placeholder="location">
+            <div class="input-append">
+                    <input type="text" id="weather_location" name="weather_location" class="span3" placeholder="location">
                     <button type="submit" class="btn">
                         Add new location
                     </button>
-                </form>
             </div>
             <table class="table">
-                <tbody>
+                <thead>
                     <tr>
                         <th>
                             Location
@@ -29,34 +28,22 @@
                             Options
                         </th>
                     </tr>
+                </thead>
+                <tbody>
+                    @foreach ($locations as $item)
                     <tr>
                         <td>
-                            Brugge
+                            {{{ $item->location }}}
                         </td>
                         <td class="text-center">
-                            <i class="icon-remove"></i>
-                            <i class="icon-move"></i>
+                            <a href="{{ URL::to('/ui/weather/' . $screen_id . '/'. $item->id . '/remove') }}"><i class="icon-remove"></i></a>
+                            <!--i class="icon-move"></i-->
                         </td>
                     </tr>
-                    <tr>
-                        <td>
-                            Oostende
-                        </td>
-                        <td class="text-center">
-                            <i class="icon-remove"></i>
-                            <i class="icon-move"></i>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            Blankenberge
-                        </td>
-                        <td class="text-center">
-                            <i class="icon-remove"></i>
-                            <i class="icon-move"></i>
-                        </td>
-                    </tr>
+                    @endforeach
                 </tbody>
             </table>
+
+            {{ Form::token() . Form::close() }}
         </div>
 @endsection

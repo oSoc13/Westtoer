@@ -22,8 +22,11 @@ Route::controller('/api', 'APIController');
  */
 Route::get('/ui', 'OverviewController@getOverview');
 Route::post('/ui/create/screen', 'OverviewController@createScreen');
-Route::get('/ui/screen/{id}', array('as' => 'screen', 'uses' => 'DashboardController@buildDashboard'));
-Route::post('/ui/screen/{id}', array('before' => 'csrf', 'uses' => 'DashboardController@postSettings'));
+Route::get('/ui/screen/{screen_id}', array('as' => 'screen', 'uses' => 'DashboardController@buildDashboard'));
+Route::post('/ui/screen/{screen_id}', array('before' => 'csrf', 'uses' => 'DashboardController@postSettings'));
+Route::post('/ui/picasa/{screen_id}', array('before' => 'csrf', 'uses' => 'DashboardController@setAlbums'));
+Route::post('/ui/weather/{screen_id}', array('before' => 'csrf', 'uses' => 'DashboardController@addWeather'));
+Route::get('/ui/weather/{screen_id}/{weather_id}/remove', 'DashboardController@removeWeather');
 
 
 

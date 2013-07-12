@@ -62,7 +62,7 @@
                     @endforeach
                 </tbody>
             </table>
-            <div class="pagination pagination-centered">
+            <div class="pagination pagination-centered hidden">
                 <ul>
                     <li>
                         <a href="#">Prev</a>
