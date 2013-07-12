@@ -31,10 +31,10 @@ ehthumbs.db
 Thumbs.db
 *~
 
-##########################
-# Editor generated files #
-##########################
-.settings
-.buildpath
-.project
-vendor/*
+
+######################
+# Ignore deploy info #
+######################
+/backup
+/log
+private
