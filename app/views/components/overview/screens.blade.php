@@ -13,7 +13,7 @@
                 </div>
             </form>
             <table class="table">
-                <tbody id="screenlist">
+                <thead>
                     <tr>
                         <th class="span1">
                             ID
@@ -21,10 +21,12 @@
                         <th>
                             Name
                         </th>
-                        <th class="span1">
+                        <th class="span2">
                             Location
                         </th>
                     </tr>
+                </thead>
+                <tbody id="screenlist">
                     @foreach ($screens as $screen)
                     <tr>
                         <td>
@@ -47,18 +49,7 @@
         </div>
 
         <script type="text/javascript">
-            /*var $rows = $('#screenlist tr');
-            $('#screenfilter').keyup(function() {
-                var val = jQuery.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
-
-                $rows.show().filter(function() {
-                    var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
-                    return !~text.indexOf(val);
-                }).hide();
-            });
-            */
              $(document).ready(function() {
-             //Declare the custom selector 'containsIgnoreCase'.
                   $.expr[':'].containsIgnoreCase = function(n,i,m){
                       return jQuery(n).text().toUpperCase().indexOf(m[3].toUpperCase())>=0;
                   };

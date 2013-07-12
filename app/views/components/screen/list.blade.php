@@ -9,11 +9,11 @@
                     <button type="submit" class="btn">
                         <i class="icon-search"></i>
                     </button>
-                    <input type="search" class="search-query" placeholder="Filter">
+                    <input type="search" id="itemlistfilter" class="search-query" placeholder="Filter">
                 </div>
             </form>
             <table class="table">
-                <tbody>
+                <thead>
                     <tr>
                         <th class="span2">
                             Date
@@ -25,6 +25,8 @@
                             Options
                         </th>
                     </tr>
+                </thead>
+                <tbody id="itemlist">
                     @foreach ($events as $event)
                     
                     @if ($event->score == -1)
@@ -111,4 +113,29 @@
                 </tbody>
             </table>
         </div>
+
+        <script type="text/javascript">
+             $(document).ready(function() {
+                  $.expr[':'].containsIgnoreCase = function(n,i,m){
+                      return jQuery(n).text().toUpperCase().indexOf(m[3].toUpperCase())>=0;
+                  };
+              
+                  $("#itemlistfilter").keyup(function(){
+
+                      $("#itemlist").find("tr").hide();
+                      var data = this.value.split(" ");
+                      var jo = $("#itemlist").find("tr");
+                      $.each(data, function(i, v){
+                           jo = jo.filter("*:containsIgnoreCase('"+v+"')");
+                      });
+
+                      jo.show();
+
+                  }).focus(function(){
+                      this.value="";
+                      $(this).css({"color":"black"});
+                      $(this).unbind('focus');
+                  }).css({"color":"#C0C0C0"});
+              });
+        </script>
 @endsection
