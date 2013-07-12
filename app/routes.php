@@ -24,7 +24,7 @@ Route::controller('/api', 'APIController');
 /**
  * Dashboard
  */
-Route::get('/ui/screen/{id}', 'DashboardController@buildDashboard');
+Route::get('/ui/screen/{id}', array('as' => 'screen', 'uses' => 'DashboardController@buildDashboard'));
 Route::post('/ui/screen/{id}', array('before' => 'csrf', 'uses' => 'DashboardController@postSettings'));
 
 
