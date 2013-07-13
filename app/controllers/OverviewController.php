@@ -74,6 +74,9 @@ class OverviewController extends \BaseController {
         $name = Input::get('name');
         $location = Input::get('location');
         $radius = Input::get('radius');
+        if ( strlen($name) === 0 ){
+            throw new Exception('No name entered.');
+        }
 
         $geocoder = new \Geocoder\Geocoder();
         $adapter  = new \Geocoder\HttpAdapter\GuzzleHttpAdapter();
@@ -99,7 +102,7 @@ class OverviewController extends \BaseController {
 
 			$this->addAlert('Screen created',$message);
 		} catch (Exception $e) {
-			$this->addError('Could not retrieve geolocation for '. $location,$e->getMessage());
+			$this->addError('Could not create screen '. $location,$e->getMessage());
 		}
 
 
