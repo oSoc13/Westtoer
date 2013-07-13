@@ -48,6 +48,14 @@ class ScreenTableSeeder extends Seeder {
         );
 
 
+        Weather::create(
+            array('screen_id' => '2',
+                  'location' => 'Brugge',
+                  'lat' => '51.2318283',
+                  'long' => '3.207782222991')
+        );
+
+
     }
 
 }
