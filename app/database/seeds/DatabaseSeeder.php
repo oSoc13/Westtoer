@@ -56,6 +56,15 @@ class ScreenTableSeeder extends Seeder {
         );
 
 
+
+        Weather::create(
+            array('screen_id' => '2',
+                  'location' => 'Oostende',
+                  'lat' => '51.21478365',
+                  'long' => '2.8912550481722')
+        );
+
+
     }
 
 }
