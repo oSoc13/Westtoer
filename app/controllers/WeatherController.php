@@ -25,7 +25,8 @@ class WeatherController extends \BaseController {
             foreach ($weather as $key => $item) {
                 $latlong = $item->lat . ',' . $item->long;
                 $parsed_item = WeatherHub::get($item->lat,$item->long);
-                array_push($parsed_weather, $parsed_item);
+                $parsed_weather[$item->location] = $parsed_item;
+                //array_push($parsed_weather, $parsed_item);
             }
 
             Cache::section('screen_weather')->put($id, $parsed_weather, 60);
