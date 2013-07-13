@@ -2,17 +2,17 @@
 
 class DatabaseSeeder extends Seeder {
 
-	/**
-	 * Run the database seeds.
-	 *
-	 * @return void
-	 */
-	public function run()
-	{
-		Eloquent::unguard();
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        Eloquent::unguard();
 
-		$this->call('ScreenTableSeeder');
-	}
+        $this->call('ScreenTableSeeder');
+    }
 
 }
 
@@ -23,11 +23,11 @@ class ScreenTableSeeder extends Seeder {
         DB::table('screens')->delete();
 
         Screen::create(
-        	array('name' => 'Veld en duin',
-        		  'location' => 'Bredene',
+            array('name' => 'Veld en duin',
+                  'location' => 'Bredene',
                   'lat' => '51.23818985',
-        		  'long' => '2.9734925473485',
-        		  'radius' => '15')
+                  'long' => '2.9734925473485',
+                  'radius' => '15')
         );
         DB::table('weather')->delete();
         
