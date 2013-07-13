@@ -4,15 +4,8 @@
             <h3>
                 Content control
             </h3>
-            <form class="form-search text-right">
-                <div class="input-prepend">
-                    <button type="submit" class="btn">
-                        <i class="icon-search"></i>
-                    </button>
-                    <input type="search" id="itemlistfilter" class="search-query" placeholder="Filter">
-                </div>
-            </form>
-            <table class="table">
+            @include('components.tablefilter', array( 'table_id' => 'itemlist') )
+            <table class="table" id="itemlist">
                 <thead>
                     <tr>
                         <th class="span2">
@@ -26,7 +19,7 @@
                         </th>
                     </tr>
                 </thead>
-                <tbody id="itemlist">
+                <tbody>
                     @foreach ($events as $event)
                     
                     @if ($event->score == -1)
@@ -113,29 +106,4 @@
                 </tbody>
             </table>
         </div>
-
-        <script type="text/javascript">
-             $(document).ready(function() {
-                  $.expr[':'].containsIgnoreCase = function(n,i,m){
-                      return jQuery(n).text().toUpperCase().indexOf(m[3].toUpperCase())>=0;
-                  };
-              
-                  $("#itemlistfilter").keyup(function(){
-
-                      $("#itemlist").find("tr").hide();
-                      var data = this.value.split(" ");
-                      var jo = $("#itemlist").find("tr");
-                      $.each(data, function(i, v){
-                           jo = jo.filter("*:containsIgnoreCase('"+v+"')");
-                      });
-
-                      jo.show();
-
-                  }).focus(function(){
-                      this.value="";
-                      $(this).css({"color":"black"});
-                      $(this).unbind('focus');
-                  }).css({"color":"#C0C0C0"});
-              });
-        </script>
 @endsection

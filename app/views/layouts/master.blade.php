@@ -11,6 +11,13 @@
         @yield('breadcrumbs')
         @yield('messages')
         @yield('content')
+
+        <hr>
+        
+        <footer>
+            <p class="pull-right"><a href="#">Back to top</a></p>
+            <p><a href="http://summerofcode.be">#oSoc13</a></p>
+        </footer>
     </div>
   </body>
 </html>
