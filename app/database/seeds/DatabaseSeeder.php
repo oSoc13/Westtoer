@@ -29,6 +29,15 @@ class ScreenTableSeeder extends Seeder {
                   'long' => '2.9734925473485',
                   'radius' => '15')
         );
+
+
+        Screen::create(
+            array('name' => 'Infopunt Brugge',
+                  'location' => 'Brugge',
+                  'lat' => '51.2318283',
+                  'long' => '3.207782222991',
+                  'radius' => '10')
+        );
         DB::table('weather')->delete();
         
         Weather::create(
