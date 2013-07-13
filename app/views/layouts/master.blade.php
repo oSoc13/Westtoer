@@ -13,15 +13,5 @@
         @yield('messages')
         @yield('content')
     </div>
-    <!--style>
-      
-      /* To push content below navbar */
-      @media (min-width: 980px) {
-        body {
-          margin-top: 41px;
-        }
-      }
-      
-    </style-->
   </body>
 </html>
