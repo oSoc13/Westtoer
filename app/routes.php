@@ -15,6 +15,7 @@
 Route::get('/', 'IndexController@index');
 
 Route::resource('/api/event', 'EventController', array('only' => array('index', 'show')));
+Route::resource('/api/weather', 'WeatherController', array('only' => array('show')));
 Route::controller('/api', 'APIController');
 
 /**
