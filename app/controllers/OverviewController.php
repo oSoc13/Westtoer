@@ -71,19 +71,21 @@ class OverviewController extends \BaseController {
 
 	public function createScreen(){
 
-        $name = Input::get('name');
-        $location = Input::get('location');
-        $radius = Input::get('radius');
-        if ( strlen($name) === 0 ){
-            throw new Exception('No name entered.');
-        }
-
-        $geocoder = new \Geocoder\Geocoder();
-        $adapter  = new \Geocoder\HttpAdapter\GuzzleHttpAdapter();
-        $chain    = new \Geocoder\Provider\OpenStreetMapsProvider($adapter);
-        $geocoder->registerProvider($chain);
 
         try {
+
+            $name = Input::get('name');
+            $location = Input::get('location');
+            $radius = Input::get('radius');
+            if ( strlen($name) === 0 ){
+                throw new Exception('No name entered.');
+            }
+
+            $geocoder = new \Geocoder\Geocoder();
+            $adapter  = new \Geocoder\HttpAdapter\GuzzleHttpAdapter();
+            $chain    = new \Geocoder\Provider\OpenStreetMapsProvider($adapter);
+            $geocoder->registerProvider($chain);
+
 		    $geocode = $geocoder->geocode($location);
 	        $screen = new Screen(array(
 	        	'name' => $name,
