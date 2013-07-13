@@ -119,7 +119,7 @@ In the project root, run:
 php artisan migrate:refresh
 ```
 
-If you are using multiple environments, add the corresponding environment
+If you are using multiple environments, add the corresponding environment with the ```--env``` switch
 
 ```
 php artisan --env=development migrate:refresh
@@ -133,7 +133,7 @@ To add demo information to the database, run ```artisan``` with the ```db:seed``
 php artisan db:seed
 ```
 
-or with multiple environments
+or with multiple environments, use the ```--env``` switch
 
 ```
 php artisan --env=development db:seed
