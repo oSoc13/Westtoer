@@ -125,4 +125,16 @@ If you are using multiple environments, add the corresponding environment
 php artisan --env=development migrate:refresh
 ```
 
+### Database seeding
 
+To add demo information to the database, run ```artisan``` with the ```db:seed``` option
+
+```
+php artisan db:seed
+```
+
+or with multiple environments
+
+```
+php artisan --env=development db:seed
+```
