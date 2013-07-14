@@ -48,6 +48,11 @@ Log::useDailyFiles(storage_path().'/logs/'.$logFile);
 |
 */
 
+App::missing(function($exception)
+{
+    return Response::view('errors.missing', array(), 404);
+});
+
 App::error(function(Exception $exception, $code)
 {
 	Log::error($exception);
