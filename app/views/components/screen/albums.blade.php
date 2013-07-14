@@ -1,6 +1,7 @@
 @layout('layouts.dashboard.home')
 @section('albums')
         <div class="well">
+            <div class="ribbon-wrapper-green"><div class="ribbon-green">TODO</div></div>
             <h3>
                 Pictures
             </h3>
