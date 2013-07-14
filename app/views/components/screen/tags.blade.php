@@ -1,6 +1,7 @@
 @layout('layouts.dashboard.home')
 @section('tags')
         <div class="well">
+            <div class="ribbon-wrapper-green"><div class="ribbon-green">TODO</div></div>
             <h3>
                 Content settings
             </h3>
