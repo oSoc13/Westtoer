@@ -21,12 +21,7 @@ class DashboardController extends BaseController {
 
     public function buildDashboard($id)
     {
-        try {
-            $this->screen = Screen::findOrFail($id);
-        } catch(Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            $message = 'Screen not found!';
-            App::abort(404, $message);
-        }
+        $this->setScreen($id);
         
         $this->layout->title  = "Dashboard - " . $this->screen->location;
 
@@ -41,6 +36,7 @@ class DashboardController extends BaseController {
                 array('name' => 'Screens', 'uri' => '/ui/screen/' . $id )
             )
         ); 
+
         $this->layout->breadcrumbs   = View::make('components.breadcrumbs', $breadcrumbs);
         
         /**
@@ -93,24 +89,66 @@ class DashboardController extends BaseController {
         $this->layout->list = View::make('components.screen.list', $list);
     }
 
+    private function setScreen($screen_id){
+        try {
+            $this->screen = Screen::findOrFail($screen_id);
+        } catch(Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            $message = 'Screen not found!';
+            App::abort(404, $message);
+        }
+    }
+
     public function postSettings()
     {
-        $this->screen = Screen::find(Input::get('screen_id'));
-        $this->screen->location = Input::get('location');
-        $this->screen->radius = Input::get('radius');
-        $this->screen->save();
+        $this->setScreen(Input::get('screen_id'));
 
-        $message  = '<ul>';
-        $message .= '<li> Location: '. $this->screen->location .'</li>';
-        $message .= '<li> Radius: '. $this->screen->radius .'</li>';
-        $message .= '<ul>';
-        $this->addAlert('Screen settings saved', $message);
+        // Validate input.
+        $validated = true;
+
+        $validate_location = Validator::make(
+            array('location' => Input::get('location')),
+            array('location' => array('required', 'min:2'))
+        );
+        if($validate_location->fails()){
+            $validated = false;
+            $this->addError('Location not correct.', 'Should be at least 2 characters.');
+        } else {
+            $this->screen->location = Input::get('location');
+        }
 
 
-        $this->buildDashboard($screen->id);
+        $validate_radius = Validator::make(
+            array('radius' => Input::get('radius')),
+            array('radius' => array('required', 'between:1,50', 'numeric'))
+        );
+        if($validate_radius->fails()){
+            $validated = false;
+            $this->addError('Radius not correct.', 'Should be between 1 km and 50 km.');    
+        } else {
+            $this->screen->radius = Input::get('radius');
+        }
+
+        if($validated){
+            try {
+                // save screen.
+                $this->screen->save();
+
+                $message  = '<ul>';
+                $message .= '<li> Location: '. $this->screen->location .'</li>';
+                $message .= '<li> Radius: '. $this->screen->radius .'</li>';
+                $message .= '<ul>';
+                $this->addAlert('Screen settings saved.', $message);
+            } catch (Exception $e) {
+                $this->addError('Could not save screen settings.', 'Check your input, if this problem persists, contact Westtoer.');
+            } 
+        }
+
+        $this->buildDashboard($this->screen->id);
     }
 
     public function addWeather($screen_id){
+
+        $this->setScreen($screen_id);
 
         $location = Input::get('weather_location');
 
@@ -120,6 +158,9 @@ class DashboardController extends BaseController {
         $chain    = new \Geocoder\Provider\OpenStreetMapsProvider($adapter);
         $geocoder->registerProvider($chain);
 
+        $weather = null;
+
+        // retrieve the geolocation.
         try {
             $geocode = $geocoder->geocode($location);
             $lat     = $geocode->getLatitude();
@@ -127,41 +168,48 @@ class DashboardController extends BaseController {
 
 
             $weather = new Weather(
-                        array( 'screen_id' => $screen_id,
-                               'location' => $location,
-                               'lat' => $lat,
-                               'long' => $long)
-                   );
-
-            $weather->save();
-
-            $message  = '<ul>';
-            $message .= '<li> Location: '. $location .'<small>('. $lat.','. $long .')</small></li>';
-            $message .= '<ul>';
-
-            $this->addAlert('Weather location added.',$message);
+                array( 'screen_id' => $this->screen->id,
+                       'location' => $location,
+                       'lat' => $lat,
+                       'long' => $long)
+            );
         } catch (Exception $e) {
-            $this->addError('Weather location not added! Could not retrieve geolocation for '. $location,$e->getMessage());
+            $this->addError('Weather location not added! Could not retrieve geolocation for '. $location, 'Please check the location name.');
         }
 
+        // if $weather is still null, the geo retriever might have failed.
+        if($weather){
+            try {
+                $weather->save();
 
-        
+                $message  = '<ul>';
+                $message .= '<li> Location: '. $location .'</li>';
+                $message .= '<li> Geocode: '. $lat.','. $long .'</li>';
+                $message .= '<ul>';
 
+                $this->addAlert('Weather location added.',$message);
 
-        $this->buildDashboard($screen_id);
+            } catch (Exception $e) {
+                $this->addError('Weather location not added!', 'Are you trying to add the same location twice?');
+            }
+        }
+
+        $this->buildDashboard($this->screen->id);
 
     }
 
 
     public function removeWeather($screen_id, $weather_id){
-
+        $this->setScreen($screen_id);
         try {
-            $item = Weather::find($weather_id);
+            $item = Weather::findOrFail($weather_id);
             $item->delete();
 
-            $this->addAlert('Weather location ('. $weather_id .') removed.','');
+            $this->addAlert('Weather location removed.','');
+        } catch (Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            $this->addError('Weather location does not exist.', 'Trying to delete something that does not exist huh?');
         } catch (Exception $e) {
-            $this->addError('Weather location ('. $weather_id .') could not be deleted', $e->getMessage());
+            $this->addError('Weather location could not be deleted', 'Please try again. If this problem persists, contact Westtoer.');
         }
 
         $this->buildDashboard($screen_id);

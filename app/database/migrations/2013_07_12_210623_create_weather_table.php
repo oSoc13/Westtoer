@@ -21,6 +21,7 @@ class CreateWeatherTable extends Migration {
             $table->string('location');
             $table->float('lat',15,10);
             $table->float('long',15,10);
+            $table->unique(array('screen_id', 'location'));
         });
 	}
 

@@ -4,7 +4,7 @@
             <h3>
                 Weather settings
             </h3>
-            {{ Form::open(array('url' => '/ui/weather/'.$screen_id, 'method' => 'post')) }}
+            {{ Form::open(array('url' => '/ui/weather/'.$screen_id, 'method' => 'post', 'class' => 'pull-left')) }}
             <div class="control-group hidden">
                 <div class="form-horizontal">
                     Show weather every&nbsp;
@@ -18,7 +18,9 @@
                         Add new location
                     </button>
             </div>
-            <table class="table">
+            {{ Form::token() . Form::close() }}
+            @include('components.tablefilter', array( 'table_id' => 'weatherlocations') )
+            <table id="weatherlocations" class="table">
                 <thead>
                     <tr>
                         <th>
@@ -43,7 +45,5 @@
                     @endforeach
                 </tbody>
             </table>
-
-            {{ Form::token() . Form::close() }}
         </div>
 @endsection

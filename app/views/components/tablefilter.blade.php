@@ -1,4 +1,4 @@
-            <form class="form-search text-right">
+            <form class="form-search text-right pull-right">
                 <div class="input-prepend">
                     <button type="submit" class="btn">
                         <i class="icon-search"></i>
