@@ -9,7 +9,8 @@
     @yield('navbar')
     <div class="container">
         @yield('breadcrumbs')
-        @yield('messages')
+        @include('components.messages')
+        
         @yield('content')
 
         <hr>

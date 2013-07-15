@@ -13,24 +13,6 @@ class DashboardController extends BaseController {
 
     private $ttl = 1800;
     private $screen;
-    private $errors   = array();
-    private $alerts   = array();
-
-
-    public function addError($title, $details){
-
-        $message = array('title'   => $title,
-                         'details' => $details);
-        
-        array_push($this->errors , $message);
-    }
-
-    public function addAlert($title, $details){
-        $message = array('title'   => $title,
-                         'details' => $details);
-        
-        array_push($this->alerts , $message);
-    }
 
     public function buildWithMessage($id, $title, $message){
         $this->addAlert($title,$message);
@@ -59,17 +41,6 @@ class DashboardController extends BaseController {
         ); 
         $this->layout->breadcrumbs   = View::make('components.breadcrumbs', $breadcrumbs);
         
-        /**
-         * Building messages
-         */
-
-        $messages = array(
-            'errors' => $this->errors,
-            'alerts' => $this->alerts
-        );
-
-        $this->layout->messages  = View::make('components.messages', $messages);
-
         /**
          * Building settings
          */
@@ -180,13 +151,6 @@ class DashboardController extends BaseController {
     }
 
 
-    /*
-
-Route::post('/ui/picasa/{screen_id}', array('before' => 'csrf', 'uses' => 'DashboardController@setAlbums'));
-Route::post('/ui/weather/{screen_id}', array('before' => 'csrf', 'uses' => 'DashboardController@addWeather'));
-Route::get('/ui/weather/{screen_id}/{weather_id}/remove', array('before' => 'csrf', 'uses' => 'DashboardController@removeWeather'));
-    */
-
     public function removeWeather($screen_id, $weather_id){
 
         try {
@@ -268,7 +232,6 @@ Route::get('/ui/weather/{screen_id}/{weather_id}/remove', array('before' => 'csr
         $alert = array('title' => $title, 'message' => $message);
         $this->addAlert($title, $message);
         $this->buildDashboard($screen_id);
-        //return Redirect::to('screen');
     }
 
     //TODO: remove provider when datahub is completed

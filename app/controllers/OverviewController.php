@@ -4,25 +4,6 @@ class OverviewController extends \BaseController {
 
 
 	protected $layout = 'layouts.dashboard.overview';
-	private $errors = array();
-	private $alerts = array();
-
-
-
-    public function addError($title, $details){
-
-        $message = array('title'   => $title,
-                         'details' => $details);
-        
-        array_push($this->errors , $message);
-    }
-
-    public function addAlert($title, $details){
-        $message = array('title'   => $title,
-                         'details' => $details);
-        
-        array_push($this->alerts , $message);
-    }
 
 	/**
 	 * 
@@ -49,17 +30,6 @@ class OverviewController extends \BaseController {
         $this->layout->breadcrumbs   = View::make('components.breadcrumbs', $breadcrumbs);
         
         /**
-         * Building messages
-         */
-
-        $messages = array(
-            'errors' => $this->errors,
-            'alerts' => $this->alerts
-        );
-
-        $this->layout->messages  = View::make('components.messages', $messages);
-
-        /**
          * Building screens
          */
 
@@ -68,6 +38,18 @@ class OverviewController extends \BaseController {
 		$this->layout->screens   = View::make('components.overview.screens', array('screens' => $screens));
 		$this->layout->newscreen   = View::make('components.overview.newscreen');
 	}
+
+
+    protected function setupLayout()
+    {
+        if ( ! is_null($this->layout))
+        {
+            
+            $this->layout = View::make($this->layout)
+                                  ->with('errors', $this->errors)
+                                  ->with('alerts', $this->alerts);
+        }
+    }
 
 	public function createScreen(){
 

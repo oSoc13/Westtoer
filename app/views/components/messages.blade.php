@@ -1,7 +1,4 @@
-@layout('layouts.dashboard.home')
-@section('messages')
-
-@if (count($errors) > 0)
+@if (isset($errors) && count($errors) > 0)
 
 	@foreach ($errors as $error)
 	    		<div class="alert alert-error">
@@ -15,7 +12,7 @@
 @endif
 
 
-@if (count($alerts) > 0)
+@if (isset($alerts) && count($alerts) > 0)
 
 	@foreach ($alerts as $alert)
 	    		<div class="alert">
@@ -27,6 +24,3 @@
 	@endforeach
 
 @endif
-
-
-@endsection
