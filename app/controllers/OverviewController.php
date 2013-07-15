@@ -13,16 +13,14 @@ class OverviewController extends \BaseController {
 	public function getOverview()
 	{
 
-		$title = 'Overview';
-        $this->layout->head         = View::make('components.head')->with('title', $title);
+		$this->layout->title = 'Overview';
 
-        $this->layout->navbar       = View::make('components.navbar');
 
         /**
          * Building breadcrumbs
          */
         $breadcrumbs = array(
-            'bread_title' =>  $title,
+            'bread_title' =>  $this->layout->title,
             'bread_items' => array(
                 array('name' => 'Dashboard', 'uri' => '/ui' )
             )

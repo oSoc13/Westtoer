@@ -11,16 +11,14 @@ class APIController extends \BaseController {
 	 */
 	public function getIndex()
     {
-        $title = 'API';
-        $this->layout->head         = View::make('components.head')->with('title', $title);
+        $this->layout->title = 'API';
 
-        $this->layout->navbar       = View::make('components.navbar');
 
         /**
          * Building breadcrumbs
          */
         $breadcrumbs = array(
-            'bread_title' =>  $title,
+            'bread_title' =>  $this->layout->title,
             'bread_items' => array(
             )
         ); 

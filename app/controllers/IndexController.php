@@ -11,16 +11,14 @@ class IndexController extends \BaseController {
 	 */
 	public function index()
 	{
-		$title = 'Dashboard';
-        $this->layout->head         = View::make('components.head')->with('title', $title);
+		$this->layout->title = 'Dashboard';
 
-        $this->layout->navbar       = View::make('components.navbar');
 
         /**
          * Building breadcrumbs
          */
         $breadcrumbs = array(
-            'bread_title' =>  $title,
+            'bread_title' =>  $this->layout->title,
             'bread_items' => array(
             )
         ); 

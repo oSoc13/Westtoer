@@ -21,13 +21,15 @@ class DashboardController extends BaseController {
 
     public function buildDashboard($id)
     {
-        $this->screen = Screen::find($id);
-        $title  = "Dashboard - " . $this->screen->location;
+        try {
+            $this->screen = Screen::findOrFail($id);
+        } catch(Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            $message = 'Screen not found!';
+            App::abort(404, $message);
+        }
+        
+        $this->layout->title  = "Dashboard - " . $this->screen->location;
 
-
-        $this->layout->head         = View::make('components.head')->with('title', $title);
-
-        $this->layout->navbar       = View::make('components.navbar');
 
         /**
          * Building breadcrumbs
