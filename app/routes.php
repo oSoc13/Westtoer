@@ -11,7 +11,6 @@
 |
 */
 
-
 Route::get('/', 'IndexController@index');
 
 Route::resource('/api/event', 'EventController', array('only' => array('index', 'show')));
