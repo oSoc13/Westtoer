@@ -133,10 +133,8 @@ class DashboardController extends BaseController {
                 // save screen.
                 $this->screen->save();
 
-                $message  = '<ul>';
-                $message .= '<li> Location: '. $this->screen->location .'</li>';
-                $message .= '<li> Radius: '. $this->screen->radius .'</li>';
-                $message .= '<ul>';
+                $message  = 'Screen settings changed to '. $this->screen->location . ' ';
+                $message .= 'with radius '. $this->screen->radius .'.';
                 $this->addAlert('Screen settings saved.', $message);
             } catch (Exception $e) {
                 $this->addError('Could not save screen settings.', 'Check your input, if this problem persists, contact Westtoer.');
@@ -180,10 +178,8 @@ class DashboardController extends BaseController {
             try {
                 $weather->save();
 
-                $message  = '<ul>';
-                $message .= '<li> Location: '. $location .'</li>';
-                $message .= '<li> Geocode: '. $lat.','. $lon .'</li>';
-                $message .= '<ul>';
+                $message  = 'Location '. $location;
+                $message .= ' ('. $lat.','. $lon .') added to weather locations.';
 
                 $this->addAlert('Weather location added.',$message);
 
@@ -201,9 +197,13 @@ class DashboardController extends BaseController {
         $this->setScreen($screen_id);
         try {
             $item = Weather::findOrFail($weather_id);
-            $item->delete();
+            if($screen_id == $item->screen_id){
+                $item->delete();
 
-            $this->addAlert('Weather location removed.','');
+                $this->addAlert('Weather location removed.','');
+            } else {
+                $this->addError('Wrong screen.', 'This weather item does not belong to the given screen.');
+            }
         } catch (Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             $this->addError('Weather location does not exist.', 'Trying to delete something that does not exist huh?');
         } catch (Exception $e) {
@@ -215,10 +215,6 @@ class DashboardController extends BaseController {
     }
 
     private function getList(){
-        //TODO: remove providers, only one getEvent needed.
-        //$win_events     = $this->getEvents('WIN');
-        //$uitdb_events   = $this->getEvents('UITDB');
-        //$events         = array_merge($win_events, $uitdb_events); 
         if (! $matched_events = Cache::section('matched_events')->get($this->screen->id)){
             $events         = $this->getEvents();
             $matched_events = $this->matchFilters($events);
@@ -267,16 +263,16 @@ class DashboardController extends BaseController {
              $filter->save();
         }
         Cache::section('matched_events')->put($screen_id, $matched_events, $this->ttl);
-        $message = '<strong>' . $event_name . '</strong> is now ';
+        $message = $event_name . ' is now ';
         switch ($score) {
             case -1:
-                $message .= 'excluded from this screen';
+                $message .= 'excluded from this screen.';
                 break;
             case -0.5:
-                $message .= 'marked as less important for this screen';
+                $message .= 'marked as less important for this screen.';
                 break;
             case 1:
-                $message .= 'marked as important for this screen';
+                $message .= 'marked as important for this screen.';
                 break;
         }
         $title = $event_name.' modified!';

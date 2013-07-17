@@ -13,10 +13,6 @@ class EventController extends \BaseController {
     public function index()
     {
 
-        // http://westtoer.be/voc/provider
-        // TODO: remove $provider -> in hub settings set mixed feed.
-        //$provider = "UITDB"; // "WIN";
-
         if ($events = Cache::section('parsed')->get('events_parsed'))
         {
             return $events;
@@ -93,8 +89,7 @@ class EventController extends \BaseController {
         return $matched_events;
     }
 
-    //TODO: remove provider when datahub is completed
-    private function getEvents() // UITDB or WIN
+    private function getEvents()
     {
         if ($events = Cache::section('origin')->get('events_parsed'))
         {

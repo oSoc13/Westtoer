@@ -37,8 +37,8 @@ class Hub {
             $end_date = '2013-09-30';
             $lat_max = 54;
             $lat_min = 50;
-            $lon_max = 2;
-            $lon_min = 4;
+            $lon_max = 4;
+            $lon_min = 2;
             $call_url = $resource . '?limit=' . $limit .
                                     '&start=' . $start_date . 
                                     '&end='. $end_date .
