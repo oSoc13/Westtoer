@@ -47,7 +47,18 @@
                             {{{ $event->name }}}
                             <br>
                             <small>
-                                {{ $event->addressLocality }}
+                                @if (isset($event->streetAddress))
+                                    {{{ $event->streetAddress }}}
+                                @endif
+                                @if (isset($event->streetAddress) && isset($event->postalCode))
+                                    -
+                                @endif
+                                @if (isset($event->postalCode))
+                                    {{{ $event->postalCode }}}
+                                @endif
+                                @if (isset($event->addressLocality))
+                                    {{{ $event->addressLocality }}}
+                                @endif
                             </small>
                         </td>
                         <td class="form-actions">

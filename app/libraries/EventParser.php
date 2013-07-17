@@ -23,6 +23,8 @@ class EventParser {
             $event->startTime       = EventParser::retrieve_value($raw_event,'http://westtoer.be/voc/startTime');
             $event->endTime         = EventParser::retrieve_value($raw_event,'http://westtoer.be/voc/endTime');
             $event->addressLocality = EventParser::retrieve_value($raw_event,'http://schema.org/addressLocality');
+            $event->postalCode      = EventParser::retrieve_value($raw_event,'http://schema.org/postalCode');
+            $event->streetAddress   = EventParser::retrieve_value($raw_event,'http://schema.org/streetAddress');
             
             $type                   = EventParser::retrieve_value($raw_event,'http://www.w3.org/1999/02/22-rdf-syntax-ns#type');
             $event->type            = ($type == "http://schema.org/TouristAttraction") ? "attraction" : "event"; 
