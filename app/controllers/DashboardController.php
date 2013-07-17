@@ -14,13 +14,12 @@ class DashboardController extends BaseController {
     private $ttl = 1800;
     private $screen;
 
-    public function buildWithMessage($id, $title, $message){
+    public function buildWithMessage($id, $title, $message) {
         $this->addAlert($title,$message);
         $this->buildDashboard($id);
     }
 
-    public function buildDashboard($id)
-    {
+    public function buildDashboard($id) {
         $this->setScreen($id);
         
         $this->layout->title  = "Dashboard - " . $this->screen->location;
@@ -89,7 +88,7 @@ class DashboardController extends BaseController {
         $this->layout->list = View::make('components.screen.list', $list);
     }
 
-    private function setScreen($screen_id){
+    private function setScreen($screen_id) {
         try {
             $this->screen = Screen::findOrFail($screen_id);
         } catch(Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -98,8 +97,7 @@ class DashboardController extends BaseController {
         }
     }
 
-    public function postSettings()
-    {
+    public function postSettings() {
         $this->setScreen(Input::get('screen_id'));
 
         // Validate input.
@@ -128,7 +126,7 @@ class DashboardController extends BaseController {
             $this->screen->radius = Input::get('radius');
         }
 
-        if($validated){
+        if($validated) {
             try {
                 // save screen.
                 $this->screen->save();
@@ -144,7 +142,7 @@ class DashboardController extends BaseController {
         $this->buildDashboard($this->screen->id);
     }
 
-    public function addWeather($screen_id){
+    public function addWeather($screen_id) {
 
         $this->setScreen($screen_id);
 
@@ -174,7 +172,7 @@ class DashboardController extends BaseController {
         }
 
         // if $weather is still null, the geo retriever failed to retrieve the location
-        if($weather){
+        if($weather) {
             try {
                 $weather->save();
 
@@ -193,7 +191,7 @@ class DashboardController extends BaseController {
     }
 
 
-    public function removeWeather($screen_id, $weather_id){
+    public function removeWeather($screen_id, $weather_id) {
         $this->setScreen($screen_id);
         try {
             $item = Weather::findOrFail($weather_id);
@@ -214,7 +212,7 @@ class DashboardController extends BaseController {
 
     }
 
-    private function getList(){
+    private function getList() {
         if (! $matched_events = Cache::section('matched_events')->get($this->screen->id)){
             $events         = $this->getEvents();
             $matched_events = $this->matchFilters($events);
@@ -223,7 +221,7 @@ class DashboardController extends BaseController {
         return $matched_events;
     }
 
-    private function matchFilters($events){
+    private function matchFilters($events) {
         $filters = $this->screen->filters();
         $matched_events;
 
@@ -240,7 +238,7 @@ class DashboardController extends BaseController {
         return $matched_events;
     }
 
-    private function setScore($screen_id, $event_name, $score){
+    private function setScore($screen_id, $event_name, $score) {
         $event_name = urldecode($event_name);
         if (! $matched_events = Cache::section('matched_events')->get($screen_id))
         {
@@ -281,14 +279,11 @@ class DashboardController extends BaseController {
         $this->buildDashboard($screen_id);
     }
 
-    private function getEvents()
-    {
-        if ($events = Cache::section('origin')->get('events_parsed'))
-        {
+    private function getEvents() {
+        if ($events = Cache::section('origin')->get('events_parsed')) {
             return $events;
         } 
-        else
-        {
+        else {
             $raw_events = Hub::get();
 
             $events = EventParser::getEvents($raw_events);
@@ -298,16 +293,13 @@ class DashboardController extends BaseController {
         }
     }
 
-    public function thumbsUp($screen_id, $event_name)
-    {
+    public function thumbsUp($screen_id, $event_name) {
         $this->setScore($screen_id, $event_name, 1);
     }
-    public function thumbsDown($screen_id, $event_name)
-    {
+    public function thumbsDown($screen_id, $event_name) {
         $this->setScore($screen_id, $event_name, -0.5);
     }
-    public function remove($screen_id, $event_name)
-    {
+    public function remove($screen_id, $event_name) {
         $this->setScore($screen_id, $event_name, -1);
     }
 
