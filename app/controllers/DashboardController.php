@@ -133,10 +133,8 @@ class DashboardController extends BaseController {
                 // save screen.
                 $this->screen->save();
 
-                $message  = '<ul>';
-                $message .= '<li> Location: '. $this->screen->location .'</li>';
-                $message .= '<li> Radius: '. $this->screen->radius .'</li>';
-                $message .= '<ul>';
+                $message  = 'Screen settings changed to '. $this->screen->location . ' ';
+                $message .= 'with radius '. $this->screen->radius .'.';
                 $this->addAlert('Screen settings saved.', $message);
             } catch (Exception $e) {
                 $this->addError('Could not save screen settings.', 'Check your input, if this problem persists, contact Westtoer.');
@@ -161,31 +159,27 @@ class DashboardController extends BaseController {
         $weather = null;
 
         // retrieve the geolocation.
-        try {
-            $geocode = $geocoder->geocode($location);
-            $lat     = $geocode->getLatitude();
-            $long    = $geocode->getLongitude();
-
-
+        $latlon = LocationParser::getGeocode($location);
+        $lat = $latlon['lat'];
+        $lon = $latlon['lon'];
+        if (isset($lat) && isset($lon)){
             $weather = new Weather(
                 array( 'screen_id' => $this->screen->id,
                        'location' => $location,
                        'lat' => $lat,
-                       'long' => $long)
+                       'long' => $lon)
             );
-        } catch (Exception $e) {
+        } else {
             $this->addError('Weather location not added! Could not retrieve geolocation for '. $location, 'Please check the location name.');
         }
 
-        // if $weather is still null, the geo retriever might have failed.
+        // if $weather is still null, the geo retriever failed to retrieve the location
         if($weather){
             try {
                 $weather->save();
 
-                $message  = '<ul>';
-                $message .= '<li> Location: '. $location .'</li>';
-                $message .= '<li> Geocode: '. $lat.','. $long .'</li>';
-                $message .= '<ul>';
+                $message  = 'Location '. $location;
+                $message .= ' ('. $lat.','. $lon .') added to weather locations.';
 
                 $this->addAlert('Weather location added.',$message);
 
@@ -203,9 +197,13 @@ class DashboardController extends BaseController {
         $this->setScreen($screen_id);
         try {
             $item = Weather::findOrFail($weather_id);
-            $item->delete();
+            if($screen_id == $item->screen_id){
+                $item->delete();
 
-            $this->addAlert('Weather location removed.','');
+                $this->addAlert('Weather location removed.','');
+            } else {
+                $this->addError('Wrong screen.', 'This weather item does not belong to the given screen.');
+            }
         } catch (Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             $this->addError('Weather location does not exist.', 'Trying to delete something that does not exist huh?');
         } catch (Exception $e) {
@@ -217,12 +215,11 @@ class DashboardController extends BaseController {
     }
 
     private function getList(){
-        //TODO: remove providers, only one getEvent needed.
-        $win_events     = $this->getEvents('WIN');
-        $uitdb_events   = $this->getEvents('UITDB');
-        $events         = array_merge($win_events, $uitdb_events);
-        $matched_events = $this->matchFilters($events);
-        Cache::section('matched_events')->put($this->screen->id, $matched_events, 60);
+        if (! $matched_events = Cache::section('matched_events')->get($this->screen->id)){
+            $events         = $this->getEvents();
+            $matched_events = $this->matchFilters($events);
+            Cache::section('matched_events')->put($this->screen->id, $matched_events, $this->ttl);
+        }
         return $matched_events;
     }
 
@@ -265,17 +262,17 @@ class DashboardController extends BaseController {
                 );
              $filter->save();
         }
-        Cache::section('matched_events')->put($screen_id, $matched_events, 60);
-        $message = '<strong>' . $event_name . '</strong> is now ';
+        Cache::section('matched_events')->put($screen_id, $matched_events, $this->ttl);
+        $message = $event_name . ' is now ';
         switch ($score) {
             case -1:
-                $message .= 'excluded from this screen';
+                $message .= 'excluded from this screen.';
                 break;
             case -0.5:
-                $message .= 'marked as less important for this screen';
+                $message .= 'marked as less important for this screen.';
                 break;
             case 1:
-                $message .= 'marked as important for this screen';
+                $message .= 'marked as important for this screen.';
                 break;
         }
         $title = $event_name.' modified!';
@@ -284,8 +281,7 @@ class DashboardController extends BaseController {
         $this->buildDashboard($screen_id);
     }
 
-    //TODO: remove provider when datahub is completed
-    private function getEvents($provider = 'WIN', $limit = -1) // UITDB or WIN
+    private function getEvents()
     {
         if ($events = Cache::section('origin')->get('events_parsed'))
         {
@@ -293,7 +289,7 @@ class DashboardController extends BaseController {
         } 
         else
         {
-            $raw_events = Hub::get($provider."/Events.json");
+            $raw_events = Hub::get();
 
             $events = EventParser::getEvents($raw_events);
             Cache::section('origin')->put('events_parsed', $events, $this->ttl);

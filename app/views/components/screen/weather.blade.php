@@ -38,8 +38,11 @@
                             {{{ $item->location }}}
                         </td>
                         <td class="text-center">
-                            <a href="{{{ URL::to('/ui/weather/' . $screen_id . '/'. $item->id . '/remove') }}}"><i class="icon-remove"></i></a>
-                            <!--i class="icon-move"></i-->
+                            {{ Form::open(array('url' => URL::to('/ui/weather/' . $screen_id . '/'. $item->id . '/remove'), 'method' => 'get', 'style' => 'display:inline;')) }}
+                                <button type="submit" class="btn btn-link" style="display:inline; width:14px; height:20px; padding:0; ">
+                                    <i class="icon-remove"></i>
+                                </button>
+                            {{ Form::token() . Form::close() }}
                         </td>
                     </tr>
                     @endforeach

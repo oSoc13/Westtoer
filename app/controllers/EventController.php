@@ -13,20 +13,15 @@ class EventController extends \BaseController {
     public function index()
     {
 
-        // http://westtoer.be/voc/provider
-        // TODO: remove $provider -> in hub settings set mixed feed.
-        $provider = "UITDB"; // "WIN";
-
         if ($events = Cache::section('parsed')->get('events_parsed'))
         {
             return $events;
-        } else
-        {
-            $raw_events = Hub::get($provider."/Events.json");
+        } else {
+            $raw_events = Hub::get();
 
             $events = EventParser::getEvents($raw_events);
 
-            Cache::section('parsed')->put('events_parsed', $events, 60);
+            Cache::section('parsed')->put('events_parsed', $events, $this->ttl);
 
             return $events;
         }
@@ -60,54 +55,41 @@ class EventController extends \BaseController {
      * @param  int  $id
      * @return Response
      */
-    public function show($id)
-    {
+    public function show($id) {
         $this->screen = Screen::find($id);
-        if ($events = Cache::section('screen_output')->get($id))
-        {
+        if ($events = Cache::section('screen_output')->get($id)) {
             return $events;
         } 
-        else
-        {
+        else {
             $events = $this->sortList($this->getList());
             Cache::section('screen_output')->put($id, $events, 360);
             return $events;
         }
     }
 
-    private function sortList($events){
-
-        usort($events, function($a, $b)
-            {
-                if ($a->score == $b->score)
-                {
-                    return 0;
-                }
-                else if ($a->score > $b->score)
-                {
-                    return -1;
-                }
-                else {              
-                    return 1;
-                }
+    private function sortList($events) {
+        // TODO insert awesome sorting algorithm.
+        usort($events, function($a, $b) {
+            if ($a->score == $b->score) {
+                return 0;
+            } else if ($a->score > $b->score) {
+                return -1;
+            } else { 
+                return 1;
             }
-        );
+        });
 
         return $events;
     }
 
     private function getList(){
-        //TODO: remove providers, only one getEvent needed.
-        $win_events     = $this->getEvents('WIN');
-        $uitdb_events   = $this->getEvents('UITDB');
-        $events         = array_merge($win_events, $uitdb_events);
+        $events   = $this->getEvents();
         $matched_events = $this->matchFilters($events);
         Cache::section('matched_events')->put($this->screen->id, $matched_events, 60);
         return $matched_events;
     }
 
-    //TODO: remove provider when datahub is completed
-    private function getEvents($provider = 'WIN', $limit = -1) // UITDB or WIN
+    private function getEvents()
     {
         if ($events = Cache::section('origin')->get('events_parsed'))
         {
@@ -115,7 +97,7 @@ class EventController extends \BaseController {
         } 
         else
         {
-            $raw_events = Hub::get($provider."/Events.json");
+            $raw_events = Hub::get();
 
             $events = EventParser::getEvents($raw_events);
             Cache::section('origin')->put('events_parsed', $events, $this->ttl);

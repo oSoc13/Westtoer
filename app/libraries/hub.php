@@ -18,34 +18,43 @@ class Hub {
      * 
      * @return info as json.
      */
-    public static function get($resource = 'WIN/Events.json', $limit = -1)
-    { 
+    public static function get($limit = 0) { 
         $base_url   = Config::get('hub.base_url');
+        $resource   = Config::get('hub.resource');
         $user       = Config::get('hub.user');
         $password   = Config::get('hub.password');
         $cache_ttl  = Config::get('hub.cache_ttl');
 
-        if ($events = Cache::section('hub')->get($resource))
-        {
+        if($limit = 0){
+            $limit  = Config::get('hub.limit');
+        }
+        
+        if ($events = Cache::section('hub')->get($resource)) {
             return $events;
         }
-        else
-        {
-            $call_url = $resource . '?limit=' . $limit;
+        else {
+            $start_date = '2013-07-01';
+            $end_date = '2013-09-30';
+            $lat_max = 54;
+            $lat_min = 50;
+            $lon_max = 4;
+            $lon_min = 2;
+            $call_url = $resource . '?limit=' . $limit .
+                                    '&start=' . $start_date . 
+                                    '&end='. $end_date .
+                                    '&lat_max='. $lat_max .
+                                    '&lat_min=' . $lat_min . 
+                                    '&lon_max='. $lon_max .
+                                    '&lon_min='. $lon_min ;
 
             $client = new Client($base_url);
 
             $events = $client->get($call_url)->setAuth($user, $password)->send();
 
-            if($events->isSuccessful() && $events)
-            {
+            if($events->isSuccessful() && $events) {
                 Cache::section('hub')->put($resource, $events->json(), $cache_ttl);
                 return $events->json();
             }
         }
-
-        return null;
-
     }
-
 }

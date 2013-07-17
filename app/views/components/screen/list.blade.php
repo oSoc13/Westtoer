@@ -9,12 +9,12 @@
                 <thead>
                     <tr>
                         <th class="span2">
-                            Date
+                            Date <small>(if event)</small>
                         </th>
                         <th>
                             Item
                         </th>
-                        <th class="span1">
+                        <th class="span2">
                             Options
                         </th>
                     </tr>
@@ -32,24 +32,54 @@
                     <tr>
                     @endif
                         <td>
+                            @if ($event->startDate == null)
+                            Attraction
+                            @else
                             {{{ $event->startDate }}}
                             <br>
                             <small>
                                 {{{ $event->startTime }}}
                                 {{{ $event->endTime }}}
                             </small>
+                            @endif
                         </td>
                         <td>
                             {{{ $event->name }}}
                             <br>
                             <small>
-                                {{ $event->addressLocality }}
+                                @if (isset($event->streetAddress))
+                                    {{{ $event->streetAddress }}}
+                                @endif
+                                @if (isset($event->streetAddress) && isset($event->postalCode))
+                                    -
+                                @endif
+                                @if (isset($event->postalCode))
+                                    {{{ $event->postalCode }}}
+                                @endif
+                                @if (isset($event->addressLocality))
+                                    {{{ $event->addressLocality }}}
+                                @endif
                             </small>
                         </td>
-                        <td>
-                            <a href="{{{ URL::to('/ui/thumbs-up/' . $screen_id . '/'. urlencode ($event->name)) }}}"><i class="icon-thumbs-up"></i></a>
-                            <a href="{{{ URL::to('/ui/thumbs-down/' . $screen_id . '/'. urlencode ($event->name)) }}}"><i class="icon-thumbs-down"></i></a>
-                            <a href="{{{ URL::to('/ui/remove/' . $screen_id . '/'. urlencode ($event->name)) }}}"><i class="icon-remove"></i></a>
+                        <td class="form-actions">
+                            
+
+                                {{ Form::open(array('url' => URL::to('/ui/thumbs-up/' . $screen_id . '/'. urlencode ($event->name)), 'method' => 'get', 'style' => 'display:inline;')) }}
+                                    <button type="submit" class="btn btn-link" style="display:inline; width:14px; height:20px; padding:0; ">
+                                        <i class="icon-thumbs-up"></i>
+                                    </button>
+                                {{ Form::token() . Form::close() }}
+                                {{ Form::open(array('url' => URL::to('/ui/thumbs-down/' . $screen_id . '/'. urlencode ($event->name)), 'method' => 'get', 'style' => 'display:inline;')) }}
+                                    <button type="submit" class="btn btn-link" style="display:inline; width:14px; height:20px; padding:0; ">
+                                        <i class="icon-thumbs-down"></i>
+                                    </button>
+                                {{ Form::token() . Form::close() }}
+
+                                {{ Form::open(array('url' => URL::to('/ui/remove/' . $screen_id . '/'. urlencode ($event->name)), 'method' => 'get', 'style' => 'display:inline;')) }}
+                                    <button type="submit" class="btn btn-link" style="display:inline; width:14px; height:20px; padding:0; ">
+                                        <i class="icon-remove"></i>
+                                    </button>
+                                {{ Form::token() . Form::close() }}
                         </td>
                     </tr>
                     @endforeach
