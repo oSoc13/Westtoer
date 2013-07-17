@@ -161,19 +161,17 @@ class DashboardController extends BaseController {
         $weather = null;
 
         // retrieve the geolocation.
-        try {
-            $geocode = $geocoder->geocode($location);
-            $lat     = $geocode->getLatitude();
-            $long    = $geocode->getLongitude();
-
-
+        $latlon = LocationParser::getGeocode($location);
+        $lat = $latlon['lat'];
+        $lon = $latlon['lon'];
+        if (isset($lat) && isset($lon)){
             $weather = new Weather(
                 array( 'screen_id' => $this->screen->id,
                        'location' => $location,
                        'lat' => $lat,
-                       'long' => $long)
+                       'long' => $lon)
             );
-        } catch (Exception $e) {
+        } else {
             $this->addError('Weather location not added! Could not retrieve geolocation for '. $location, 'Please check the location name.');
         }
 
@@ -184,7 +182,7 @@ class DashboardController extends BaseController {
 
                 $message  = '<ul>';
                 $message .= '<li> Location: '. $location .'</li>';
-                $message .= '<li> Geocode: '. $lat.','. $long .'</li>';
+                $message .= '<li> Geocode: '. $lat.','. $lon .'</li>';
                 $message .= '<ul>';
 
                 $this->addAlert('Weather location added.',$message);
@@ -218,11 +216,14 @@ class DashboardController extends BaseController {
 
     private function getList(){
         //TODO: remove providers, only one getEvent needed.
-        $win_events     = $this->getEvents('WIN');
-        $uitdb_events   = $this->getEvents('UITDB');
-        $events         = array_merge($win_events, $uitdb_events);
-        $matched_events = $this->matchFilters($events);
-        Cache::section('matched_events')->put($this->screen->id, $matched_events, 60);
+        //$win_events     = $this->getEvents('WIN');
+        //$uitdb_events   = $this->getEvents('UITDB');
+        //$events         = array_merge($win_events, $uitdb_events); 
+        if (! $matched_events = Cache::section('matched_events')->get($this->screen->id)){
+            $events         = $this->getEvents();
+            $matched_events = $this->matchFilters($events);
+            Cache::section('matched_events')->put($this->screen->id, $matched_events, $this->ttl);
+        }
         return $matched_events;
     }
 
@@ -265,7 +266,7 @@ class DashboardController extends BaseController {
                 );
              $filter->save();
         }
-        Cache::section('matched_events')->put($screen_id, $matched_events, 60);
+        Cache::section('matched_events')->put($screen_id, $matched_events, $this->ttl);
         $message = '<strong>' . $event_name . '</strong> is now ';
         switch ($score) {
             case -1:
@@ -284,8 +285,7 @@ class DashboardController extends BaseController {
         $this->buildDashboard($screen_id);
     }
 
-    //TODO: remove provider when datahub is completed
-    private function getEvents($provider = 'WIN', $limit = -1) // UITDB or WIN
+    private function getEvents($limit = -1)
     {
         if ($events = Cache::section('origin')->get('events_parsed'))
         {
@@ -293,7 +293,7 @@ class DashboardController extends BaseController {
         } 
         else
         {
-            $raw_events = Hub::get($provider."/Events.json");
+            $raw_events = Hub::get($limit);
 
             $events = EventParser::getEvents($raw_events);
             Cache::section('origin')->put('events_parsed', $events, $this->ttl);
