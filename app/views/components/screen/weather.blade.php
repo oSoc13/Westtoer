@@ -38,7 +38,7 @@
                             {{{ $item->location }}}
                         </td>
                         <td class="text-center">
-                            <a href="{{ URL::to('/ui/weather/' . $screen_id . '/'. $item->id . '/remove') }}"><i class="icon-remove"></i></a>
+                            <a href="{{{ URL::to('/ui/weather/' . $screen_id . '/'. $item->id . '/remove') }}}"><i class="icon-remove"></i></a>
                             <!--i class="icon-move"></i-->
                         </td>
                     </tr>

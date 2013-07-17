@@ -2,9 +2,9 @@
 
 	@foreach ($errors as $error)
 	    		<div class="alert alert-error">
-	    			<h3>{{ $error['title'] }}</h3>
+	    			<h3>{{{ $error['title'] }}}</h3>
 	    			<p>
-	    				{{ $error['details'] }}
+	    				{{{ $error['details'] }}}
 	    			</p>
 	    		</div>
 	@endforeach
@@ -16,9 +16,9 @@
 
 	@foreach ($alerts as $alert)
 	    		<div class="alert">
-	    			<h3>{{ $alert['title'] }}</h3>
+	    			<h3>{{{ $alert['title'] }}}</h3>
 	    			<p>
-	    				{{ $alert['details'] }}
+	    				{{{ $alert['details'] }}}
 	    			</p>
 	    		</div>
 	@endforeach

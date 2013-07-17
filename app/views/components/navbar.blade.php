@@ -15,14 +15,14 @@
                         @else
                         <li>
                         @endif
-                            <a href="{{ URL::to('/ui') }}">Dashboard</a>
+                            <a href="{{{ URL::to('/ui') }}}">Dashboard</a>
                         </li>
                         @if ( strpos(URL::current(), URL::to('/api')) === 0 )
                         <li class="active">
                         @else
                         <li>
                         @endif
-                            <a href="{{ URL::to('/api') }}">API Help</a>
+                            <a href="{{{ URL::to('/api') }}}">API Help</a>
                         </li>
                     </ul>
                 </div>
