@@ -20,13 +20,12 @@ class EventController extends \BaseController {
         if ($events = Cache::section('parsed')->get('events_parsed'))
         {
             return $events;
-        } else
-        {
-            $raw_events = Hub::get(-1);
+        } else {
+            $raw_events = Hub::get();
 
             $events = EventParser::getEvents($raw_events);
 
-            Cache::section('parsed')->put('events_parsed', $events, 60);
+            Cache::section('parsed')->put('events_parsed', $events, $this->ttl);
 
             return $events;
         }
@@ -104,7 +103,7 @@ class EventController extends \BaseController {
     }
 
     //TODO: remove provider when datahub is completed
-    private function getEvents($limit = -1) // UITDB or WIN
+    private function getEvents() // UITDB or WIN
     {
         if ($events = Cache::section('origin')->get('events_parsed'))
         {
@@ -112,7 +111,7 @@ class EventController extends \BaseController {
         } 
         else
         {
-            $raw_events = Hub::get($limit);
+            $raw_events = Hub::get();
 
             $events = EventParser::getEvents($raw_events);
             Cache::section('origin')->put('events_parsed', $events, $this->ttl);

@@ -28,34 +28,43 @@ class LocationParser {
     }
 
     public static function getGeocode($location){
-        $geocoder= LocationParser::createGeocoder();
-        try {
-            $geocode = $geocoder->geocode($location);
-            $lat     = $geocode->getLatitude();
-            $lon     = $geocode->getLongitude();
-        } catch (Exception $e) {
-            $lat = null;
-            $lon = null;
+        if ($result = Cache::section('geocodes')->get($location)){
+            return $result;
+        } else {
+            $geocoder= LocationParser::createGeocoder();
+            try {
+                $geocode = $geocoder->geocode($location);
+                $lat     = $geocode->getLatitude();
+                $lon     = $geocode->getLongitude();
+                $result  = array('lat' => $lat, 'lon' => $lon);
+                Cache::section('geocodes')->forever($location, $result);
+            } catch (Exception $e) {
+                $lat = null;
+                $lon = null;
+            }
+            return array('lat' => $lat, 'lon' => $lon);
         }
-
-        return array('lat' => $lat, 'lon' => $lon);
     }
 
 
     public static function getLocation($lat, $lon){
-        $geocoder= LocationParser::createGeocoder();
-        try {
-            $result = $geocoder->reverse($lat, $lon);
+        $latlon = $lat. ',' . $lon;
+        if ($result = Cache::section('location')->get($latlon)){
+            return $result;
+        } else {
+            $geocoder= LocationParser::createGeocoder();
+            try {
+                $result = $geocoder->reverse($lat, $lon);
 
-            // $result is an instance of ResultInterface
-            $formatter = new \Geocoder\Formatter\Formatter($result);
+                // $result is an instance of ResultInterface
+                $formatter = new \Geocoder\Formatter\Formatter($result);
 
-            $location = $formatter->format('%S %n %L');
-
-        } catch (Exception $e) {
-            $location = '';
+                $location = $formatter->format('%S %n %L');
+                Cache::section('locations')->forever($latlon, $location);
+            } catch (Exception $e) {
+                $location = '';
+            }
+            return $location;
         }
-
-        return $location;
     }
 }

@@ -175,7 +175,7 @@ class DashboardController extends BaseController {
             $this->addError('Weather location not added! Could not retrieve geolocation for '. $location, 'Please check the location name.');
         }
 
-        // if $weather is still null, the geo retriever might have failed.
+        // if $weather is still null, the geo retriever failed to retrieve the location
         if($weather){
             try {
                 $weather->save();
@@ -285,7 +285,7 @@ class DashboardController extends BaseController {
         $this->buildDashboard($screen_id);
     }
 
-    private function getEvents($limit = -1)
+    private function getEvents()
     {
         if ($events = Cache::section('origin')->get('events_parsed'))
         {
@@ -293,7 +293,7 @@ class DashboardController extends BaseController {
         } 
         else
         {
-            $raw_events = Hub::get($limit);
+            $raw_events = Hub::get();
 
             $events = EventParser::getEvents($raw_events);
             Cache::section('origin')->put('events_parsed', $events, $this->ttl);

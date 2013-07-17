@@ -18,14 +18,14 @@ class EventParser {
             $event->image           = EventParser::retrieve_value($raw_event,'http://schema.org/image');
             $event->lat             = EventParser::retrieve_value($raw_event,'http://www.w3.org/2003/01/geo/wgs84_pos#lat');
             $event->lon             = EventParser::retrieve_value($raw_event,'http://www.w3.org/2003/01/geo/wgs84_pos#lon');
-            $event->location        = EventParser::retrieve_value($raw_event,'http://schema.org/location');
-            $type                   = EventParser::retrieve_value($raw_event,'http://www.w3.org/1999/02/22-rdf-syntax-ns#type');
-            $event->type            = ($type == "http://schema.org/TouristAttraction") ? "attraction" : "event"; 
             $event->startDate       = EventParser::retrieve_value($raw_event,'http://schema.org/startDate');
             $event->endDate         = EventParser::retrieve_value($raw_event,'http://schema.org/endDate');
             $event->startTime       = EventParser::retrieve_value($raw_event,'http://westtoer.be/voc/startTime');
             $event->endTime         = EventParser::retrieve_value($raw_event,'http://westtoer.be/voc/endTime');
-            $event->addressLocality = EventParser::retrieve_value($raw_event,'http://schema.org/addressLocality');;
+            $event->addressLocality = EventParser::retrieve_value($raw_event,'http://schema.org/addressLocality');
+            
+            $type                   = EventParser::retrieve_value($raw_event,'http://www.w3.org/1999/02/22-rdf-syntax-ns#type');
+            $event->type            = ($type == "http://schema.org/TouristAttraction") ? "attraction" : "event"; 
 
             if( EventParser::is_valid($event) ){
                 // use 'unique' events based on name
@@ -55,8 +55,8 @@ class EventParser {
 
         $base_values = ( isset($event->name) &&
                          isset($event->lat) &&
-                         isset($event->lon) &&
-                         isset($event->location)
+                         isset($event->lon)// &&
+                         //isset($event->location)
                        );
         if ($event->type == "attraction"){
             return $base_values;
