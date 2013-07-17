@@ -25,7 +25,7 @@ class Hub {
         $password   = Config::get('hub.password');
         $cache_ttl  = Config::get('hub.cache_ttl');
 
-        if($limit = 0){
+        if($limit == 0){
             $limit  = Config::get('hub.limit');
         }
         
@@ -33,7 +33,7 @@ class Hub {
             return $events;
         }
         else {
-            $start_date = '2013-07-01';
+            $start_date = '2013-07-01'; //TODO adjust
             $end_date = '2013-09-30';
             $lat_max = 54;
             $lat_min = 50;
