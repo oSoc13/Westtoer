@@ -49,7 +49,11 @@ class Hub {
 
             $client = new Client($base_url);
 
-            $events = $client->get($call_url)->setAuth($user, $password)->send();
+            $req = $client->get($call_url)->setAuth($user, $password);
+            
+            $req->getCurlOptions()->set(CURLOPT_SSL_VERIFYHOST, false);
+            $req->getCurlOptions()->set(CURLOPT_SSL_VERIFYPEER, false);
+            $events = $req->send();
 
             if($events->isSuccessful() && $events) {
                 Cache::section('hub')->put($resource, $events->json(), $cache_ttl);
