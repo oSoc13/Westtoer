@@ -59,38 +59,29 @@ class EventController extends \BaseController {
      * @param  int  $id
      * @return Response
      */
-    public function show($id)
-    {
+    public function show($id) {
         $this->screen = Screen::find($id);
-        if ($events = Cache::section('screen_output')->get($id))
-        {
+        if ($events = Cache::section('screen_output')->get($id)) {
             return $events;
         } 
-        else
-        {
+        else {
             $events = $this->sortList($this->getList());
             Cache::section('screen_output')->put($id, $events, 360);
             return $events;
         }
     }
 
-    private function sortList($events){
-
-        usort($events, function($a, $b)
-            {
-                if ($a->score == $b->score)
-                {
-                    return 0;
-                }
-                else if ($a->score > $b->score)
-                {
-                    return -1;
-                }
-                else {              
-                    return 1;
-                }
+    private function sortList($events) {
+        // TODO insert awesome sorting algorithm.
+        usort($events, function($a, $b) {
+            if ($a->score == $b->score) {
+                return 0;
+            } else if ($a->score > $b->score) {
+                return -1;
+            } else { 
+                return 1;
             }
-        );
+        });
 
         return $events;
     }
