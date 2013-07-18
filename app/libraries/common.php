@@ -1,6 +1,9 @@
 <?php
 
-class Common{
+/*
+ * Used in app/filters.php: App::before
+ */
+class Common {
     
     /*
      * Method to strip tags globally.

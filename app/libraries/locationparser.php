@@ -11,10 +11,7 @@ class LocationParser {
     /**
      * Sets all options for geocoder. Catches exception and returns empty value.
      * 
-     * @param limit amount of triplets to fetch. Use -1 for no limit.
-     * @param resource location of info to fetch.
-     * 
-     * @return info as json.
+     * @return a geocoder object
      */
 
     public static function createGeocoder(){
@@ -27,6 +24,14 @@ class LocationParser {
 
     }
 
+
+    /**
+     * Retrieves geocode for given location
+     * 
+     * @param location
+     *  
+     * @return a geocode in array (null values in array if not found)
+     */
     public static function getGeocode($location){
         if ($result = Cache::section('geocodes')->get($location)){
             return $result;
@@ -46,7 +51,14 @@ class LocationParser {
         }
     }
 
-
+    /**
+     * Retrieves location for given geocode 
+     * 
+     * @param lat latitude for location
+     * @param lon longitude for location
+     *  
+     * @return a location (empty string if not found)
+     */
     public static function getLocation($lat, $lon){
         $latlon = $lat. ',' . $lon;
         if ($result = Cache::section('location')->get($latlon)){

@@ -11,10 +11,11 @@ use Guzzle\Http\Client;
 
 class WeatherHub {
     /**
-     * Retrieves info from the datahub, caches where possible.
+     * Retrieves weather info from Weather Underground, caches where possible.
+     * requires API key (set in config.)
      * 
-     * @param limit amount of triplets to fetch. Use -1 for no limit.
-     * @param resource location of info to fetch.
+     * @param latitude
+     * @param longitude
      * 
      * @return info as json.
      */

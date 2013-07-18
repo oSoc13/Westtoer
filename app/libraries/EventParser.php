@@ -9,6 +9,14 @@
  */
 class EventParser {
 
+
+    /**
+     * Parses raw events from triplets into more usable event objects.
+     * 
+     * @param raw_events raw events from datahub.
+     * @return event objects in array.
+     */
+
     public static function getEvents($raw_events) {
 
         foreach ($raw_events as $key => $raw_event) {
@@ -34,10 +42,6 @@ class EventParser {
                 $eventlist[$event->name] = $event;
             }
         }
-
-        // foreach( $eventlist as $key => $value) {
-        //     $events[] = $value;
-        // }
         
         return $eventlist;
     }
@@ -66,6 +70,7 @@ class EventParser {
         } else { // assume event, we need at least a date.
             return $base_values && isset($event->startDate);
         }
+        
         /*
         // if event has no values, returns false to drop it. 
         // Allowed number of null values can be set through base_score.

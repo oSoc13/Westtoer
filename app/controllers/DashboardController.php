@@ -2,32 +2,26 @@
 
 class DashboardController extends BaseController {
 
-    /*
-    |--------------------------------------------------------------------------
-    | Default Dashboard Controller
-    |--------------------------------------------------------------------------
-    |
-    */
+    /* Dashboard controller for managing screen.
+     */
 
-    protected $layout = 'layouts.dashboard.home';
+    protected $layout = 'layouts.dashboard.home'; // set blade template
 
     private $ttl = 1800;
-    private $screen;
+    private $screen; // screen object.
 
     public function buildWithMessage($id, $title, $message) {
         $this->addAlert($title,$message);
         $this->buildDashboard($id);
     }
 
+    /* sets all required elements for building the dashboard.
+     */
     public function buildDashboard($id) {
         $this->setScreen($id);
-        
         $this->layout->title  = "Dashboard - " . $this->screen->location;
 
-
-        /**
-         * Building breadcrumbs
-         */
+        // Building breadcrumbs
         $breadcrumbs = array(
             'bread_title' =>  $this->screen->name,
             'bread_items' => array(
@@ -38,9 +32,7 @@ class DashboardController extends BaseController {
 
         $this->layout->breadcrumbs   = View::make('components.breadcrumbs', $breadcrumbs);
         
-        /**
-         * Building settings
-         */
+        // Building settings
         $settings = array(
             'screen_id' => $this->screen->id,
             'location' => $this->screen->location,
@@ -50,9 +42,7 @@ class DashboardController extends BaseController {
 
         $this->layout->settings  = View::make('components.screen.settings', $settings);
 
-        /**
-         * Building weather
-         */
+        // Building weather
         $weather_items = $this->screen->weather()->get();
         $weather = array(
             'screen_id' => $this->screen->id,
@@ -60,24 +50,16 @@ class DashboardController extends BaseController {
         );
         $this->layout->weather   = View::make('components.screen.weather', $weather);
 
-        /**
-         * Building albums
-         */
-
+        // Building albums
         $albums = array(
             'screen_id' => $this->screen->id
         );
         $this->layout->albums    = View::make('components.screen.albums', $albums);
 
-        /**
-         * Building tags
-         */
+        // Building tags
         $this->layout->tags      = View::make('components.screen.tags');
-        
-        /**
-         * Building list
-         */
-
+  
+        // Building list
         $matched_events = $this->getList();
 
         $list = array(
@@ -88,6 +70,10 @@ class DashboardController extends BaseController {
         $this->layout->list = View::make('components.screen.list', $list);
     }
 
+    /*
+     * Retrieves the screen object based on screen_id
+     * gives 404 error if not found.
+     */
     private function setScreen($screen_id) {
         try {
             $this->screen = Screen::findOrFail($screen_id);
@@ -97,6 +83,8 @@ class DashboardController extends BaseController {
         }
     }
 
+    /* Save main options for screen
+     */
     public function postSettings() {
         $this->setScreen(Input::get('screen_id'));
 
@@ -142,6 +130,8 @@ class DashboardController extends BaseController {
         $this->buildDashboard($this->screen->id);
     }
 
+    /* Add new weather location to this screen.
+     */
     public function addWeather($screen_id) {
 
         $this->setScreen($screen_id);
@@ -190,7 +180,8 @@ class DashboardController extends BaseController {
 
     }
 
-
+    /* Removes weather location from screen.
+     */
     public function removeWeather($screen_id, $weather_id) {
         $this->setScreen($screen_id);
         try {
@@ -212,6 +203,10 @@ class DashboardController extends BaseController {
 
     }
 
+    /* Retrieves list of events
+     * calls getEvents to retrieve the data from the hub
+     * calls matchFilters to match the events to filters from this screen associated to the events
+     */
     private function getList() {
         if (! $matched_events = Cache::section('matched_events')->get($this->screen->id)){
             $events         = $this->getEvents();
@@ -221,6 +216,25 @@ class DashboardController extends BaseController {
         return $matched_events;
     }
 
+    /* Retrieves events from the hub.
+     */
+    private function getEvents() {
+        if ($events = Cache::section('origin')->get('events_parsed')) {
+            return $events;
+        } 
+        else {
+            $raw_events = Hub::get();
+
+            $events = EventParser::getEvents($raw_events);
+            Cache::section('origin')->put('events_parsed', $events, $this->ttl);
+
+            return $events;
+        }
+    }
+
+
+    /* Matches list of events with filters from screen.
+    */
     private function matchFilters($events) {
         $filters = $this->screen->filters();
         $matched_events;
@@ -238,6 +252,23 @@ class DashboardController extends BaseController {
         return $matched_events;
     }
 
+    /* Scoring events
+     * Might need a bit of refactoring for more flexibility
+     */
+    public function thumbsUp($screen_id, $event_name) {
+        $this->setScore($screen_id, $event_name, 1);
+    }
+    public function thumbsDown($screen_id, $event_name) {
+        $this->setScore($screen_id, $event_name, -0.5);
+    }
+    public function remove($screen_id, $event_name) {
+        $this->setScore($screen_id, $event_name, -1);
+    }
+
+    /* Applies a score to an event
+     * uses associated filter or creates a new filter if not found.
+     * remark: has to be done manually because the events are not using eloquent (database)
+     */
     private function setScore($screen_id, $event_name, $score) {
         $event_name = urldecode($event_name);
         if (! $matched_events = Cache::section('matched_events')->get($screen_id))
@@ -277,30 +308,6 @@ class DashboardController extends BaseController {
         $alert = array('title' => $title, 'message' => $message);
         $this->addAlert($title, $message);
         $this->buildDashboard($screen_id);
-    }
-
-    private function getEvents() {
-        if ($events = Cache::section('origin')->get('events_parsed')) {
-            return $events;
-        } 
-        else {
-            $raw_events = Hub::get();
-
-            $events = EventParser::getEvents($raw_events);
-            Cache::section('origin')->put('events_parsed', $events, $this->ttl);
-
-            return $events;
-        }
-    }
-
-    public function thumbsUp($screen_id, $event_name) {
-        $this->setScore($screen_id, $event_name, 1);
-    }
-    public function thumbsDown($screen_id, $event_name) {
-        $this->setScore($screen_id, $event_name, -0.5);
-    }
-    public function remove($screen_id, $event_name) {
-        $this->setScore($screen_id, $event_name, -1);
     }
 
 }
