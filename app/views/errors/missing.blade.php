@@ -9,7 +9,8 @@
     <script src="{{ URL::asset('/assets/js/bootstrap.js') }}"></script>
     @include('components.navbar')
     <div class="container text-center">
-        <h1>{{ $exception->getMessage() }}</h1>
+        <h1>404</h1>
+        <h2>{{{ $exception->getMessage() }}}</h2>
         <p>
             <a href="javascript:history.go(-1)"><i class="icon-arrow-left"></i> Go back</a>
         </p>
