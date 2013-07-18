@@ -33,12 +33,12 @@ class Hub {
             return $events;
         }
         else {
-            $start_date = '2013-07-01'; //TODO adjust
-            $end_date = '2013-09-30';
-            $lat_max = 54;
-            $lat_min = 50;
-            $lon_max = 4;
-            $lon_min = 2;
+            $start_date = date('Y-m-d');
+            $end_date = date('Y-m-d', strtotime($start_date . ' + '. Config::get('hub.interval') .' days'));
+            $lat_max = Config::get('hub.lat_max');
+            $lat_min = Config::get('hub.lat_min');
+            $lon_max = Config::get('hub.lon_max');
+            $lon_min = Config::get('hub.lon_min');
             $call_url = $resource . '?limit=' . $limit .
                                     '&start=' . $start_date . 
                                     '&end='. $end_date .
