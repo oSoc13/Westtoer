@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Westtoer by oSoc13</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Westtoer</h1>
+        <h2>Web framework for Westtoer to retrieve and serve data from the datahub.</h2>
+        <a href="https://github.com/oSoc13/Westtoer" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a name="westtoer" class="anchor" href="#westtoer"><span class="octicon octicon-link"></span></a>Westtoer</h1>
+
+<hr><p>Web framework for Westtoer to retrieve, filter and serve data from the datahub.</p>
+
+<h2>
+<a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h2>
+
+<ul>
+<li>
+<strong>Data fetcher</strong>: Retrieves and caches data from the datahub.</li>
+<li>
+<strong>Dashboard</strong>: Control panel for users with screen(s) to customize their screens.</li>
+<li>
+<strong>REST service</strong>: Data source for the screen(s). Formats data from cache/data fetcher for screen(s) based on settings from dashboard. Compatible with <a href="http://flatturtle.com">FlatTurtle</a>
+</li>
+</ul><h2>
+<a name="developed-and-tested-on" class="anchor" href="#developed-and-tested-on"><span class="octicon octicon-link"></span></a>Developed and tested on</h2>
+
+<ul>
+<li>Apache</li>
+<li>PHP 5.3.x with APC (caching)</li>
+<li>MySQL</li>
+</ul><h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<h3>
+<a name="prerequisites" class="anchor" href="#prerequisites"><span class="octicon octicon-link"></span></a>Prerequisites</h3>
+
+<p>This project uses Laravel 4 as base framework.
+All dependencies are defined in <code>composer.json</code> can be installed using <a href="http://getcomposer.org/">composer</a>.
+Install composer and run the <code>composer install</code> command in this project dir to fetch all libraries.</p>
+
+<ol>
+<li>Install composer, see <a href="http://getcomposer.org/">http://getcomposer.org/</a> for more information.</li>
+<li>Download the contents of this repo or clone it.</li>
+<li>In the project folder run composer with the parameter <code>install</code>, this will read the <code>composer.json</code> from the current directory and install all required libraries in the subdirectory <code>vendor</code>.</li>
+</ol><pre><code>    composer install
+</code></pre>
+
+<h3>
+<a name="configuration" class="anchor" href="#configuration"><span class="octicon octicon-link"></span></a>Configuration</h3>
+
+<p>Laravel supports multiple environments for configuration. The base configuration files can be found in <code>app/config</code>.</p>
+
+<h3>
+<a name="single-configuration-one-environment" class="anchor" href="#single-configuration-one-environment"><span class="octicon octicon-link"></span></a>Single configuration (one environment)</h3>
+
+<p>If you just want to configure this framework for one (production) server, just edit the files in <code>app/config</code>.</p>
+
+<h4>
+<a name="appconfigdatabasephp" class="anchor" href="#appconfigdatabasephp"><span class="octicon octicon-link"></span></a>/app/config/database.php</h4>
+
+<p>Adjust the <code>connections</code> array with the database server details.</p>
+
+<h5>
+<a name="example" class="anchor" href="#example"><span class="octicon octicon-link"></span></a>example</h5>
+
+<pre><code>    'connections' =&gt; array(
+
+        'mysql' =&gt; array(
+            'driver'    =&gt; 'mysql',
+            'host'      =&gt; 'localhost',
+            'database'  =&gt; 'database_name',
+            'username'  =&gt; 'database_username',
+            'password'  =&gt; 'user_password',
+            'charset'   =&gt; 'utf8',
+            'collation' =&gt; 'utf8_unicode_ci',
+            'prefix'    =&gt; 'prefix_',
+        )
+
+    ),
+</code></pre>
+
+<h4>
+<a name="appconfigcachephp" class="anchor" href="#appconfigcachephp"><span class="octicon octicon-link"></span></a>/app/config/cache.php</h4>
+
+<p>Adjust the <code>driver</code> value to select the desired caching method.</p>
+
+<p><strong>Note</strong> <code>file</code> does not support caching in sections and cannot be used.</p>
+
+<h5>
+<a name="example-1" class="anchor" href="#example-1"><span class="octicon octicon-link"></span></a>example</h5>
+
+<pre><code>'driver' =&gt; 'apc',
+</code></pre>
+
+<h4>
+<a name="appconfighubphp" class="anchor" href="#appconfighubphp"><span class="octicon octicon-link"></span></a>/app/config/hub.php</h4>
+
+<p>Add details for the datahub to fetch the data from.</p>
+
+<ul>
+<li>
+<code>base_url</code> : uri of the datahub</li>
+<li>
+<code>user</code> : username to connect to the datahub</li>
+<li>
+<code>password</code>: password to connect to the datahub</li>
+<li>
+<code>cache_ttl</code>: time to live for cached data fetched from the datahub.</li>
+</ul><h5>
+<a name="example-2" class="anchor" href="#example-2"><span class="octicon octicon-link"></span></a>example</h5>
+
+<pre><code>return array(
+    'base_url' =&gt; 'https://datahub.westtoer.be/',
+    'user' =&gt; 'username',
+    'password' =&gt; 'password',
+    'cache_ttl' =&gt; 60*60
+);
+</code></pre>
+
+<h3>
+<a name="multiple-environments" class="anchor" href="#multiple-environments"><span class="octicon octicon-link"></span></a>Multiple environments</h3>
+
+<p>If you want to use multiple environments (for example: a development environment and a production environment with separate caching and databases). Copy the files to a new subdirectory in the <code>/app/config</code> folder and configure them there, for example in <code>/app/config/development</code> and in <code>/app/config/production</code>.</p>
+
+<p>Then configure the detection of the development environment in <code>bootstrap/start.php</code>.</p>
+
+<pre><code>$env = $app-&gt;detectEnvironment(array(
+    'development' =&gt; array('*.dev', 'localhost'),
+    'production' =&gt; array('dashboard.westtoer.be'),
+
+));
+</code></pre>
+
+<h3>
+<a name="database-migration" class="anchor" href="#database-migration"><span class="octicon octicon-link"></span></a>Database migration</h3>
+
+<p>To create the necessary tables for this framework, <code>artisan</code> can be used.</p>
+
+<p>In the project root, run:</p>
+
+<pre><code>php artisan migrate:refresh
+</code></pre>
+
+<p>If you are using multiple environments, add the corresponding environment with the <code>--env</code> switch</p>
+
+<pre><code>php artisan --env=development migrate:refresh
+</code></pre>
+
+<h3>
+<a name="database-seeding" class="anchor" href="#database-seeding"><span class="octicon octicon-link"></span></a>Database seeding</h3>
+
+<p>To add demo information to the database, run <code>artisan</code> with the <code>db:seed</code> option</p>
+
+<pre><code>php artisan db:seed
+</code></pre>
+
+<p>or with multiple environments, use the <code>--env</code> switch</p>
+
+<pre><code>php artisan --env=development db:seed
+</code></pre>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/oSoc13/Westtoer/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/oSoc13/Westtoer/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/oSoc13/Westtoer"></a> is maintained by <a href="https://github.com/oSoc13">oSoc13</a>.</p>
+
+          <p>This page was generated by <a href="pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
