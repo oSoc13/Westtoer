@@ -28,7 +28,7 @@ Install composer and run the ```composer install``` command in this project dir 
 2. Download the contents of this repo or clone it.
 3. In the project folder run composer with the parameter ```install```, this will read the ```composer.json``` from the current directory and install all required libraries in the subdirectory ```vendor```.
 
-```
+```Shell
 	composer install
 ```
 ### Configuration
@@ -45,7 +45,7 @@ If you just want to configure this framework for one (production) server, just e
 
 Adjust the ```connections``` array with the database server details.
 ##### example
-```
+```PHP
 	'connections' => array(
 
 		'mysql' => array(
@@ -69,7 +69,7 @@ Adjust the ```driver``` value to select the desired caching method.
 **Note** ```file``` does not support caching in sections and cannot be used.
 
 ##### example
-```
+```PHP
 'driver' => 'apc',
 ```
 
@@ -79,18 +79,48 @@ Adjust the ```driver``` value to select the desired caching method.
 Add details for the datahub to fetch the data from.
 
 * ```base_url``` : uri of the datahub
+* ```resource``` : resource file 
 * ```user``` : username to connect to the datahub
 * ```password```: password to connect to the datahub
+* ```interval```: amount of days in future that should be fetched.
+* ```lat_min```: min latitude of geo area to retrieve items from.
+* ```lat_max```: max latitude of geo area to retrieve items from.
+* ```lon_min```: min longitude of geo area to retrieve items from.
+* ```lon_max```: max longitude of geo area to retrieve items from.
+* ```limit```: standard limit of items (triplets) to be fetched.
 * ```cache_ttl```: time to live for cached data fetched from the datahub.
 
 
-
 ##### example
-```
+
+```PHP
 return array(
 	'base_url' => 'https://datahub.westtoer.be/',
+	'resource' => 'query/events.json',
 	'user' => 'username',
 	'password' => 'password',
+	'interval' => 30,
+	'lat_min' => 50,
+	'lat_max' => 54,
+	'lon_min' => 2,
+	'lon_max' => 4,
+	'limit' => 500,
+	'cache_ttl' => 60*60
+);
+```
+
+
+#### /app/config/weather.php
+
+Cache time and api key can be set here. Retrieve api key from Weather Underground
+
+* ```api_key```: api key for access to Weather Underground.
+* ```cache_ttl```: time to live for cached data fetched from the weather api.
+
+##### example
+```PHP
+return array(
+	'api_key' => 'api_key',
 	'cache_ttl' => 60*60
 );
 ```
@@ -101,7 +131,7 @@ If you want to use multiple environments (for example: a development environment
 
 Then configure the detection of the development environment in ```bootstrap/start.php```.
 
-```
+```PHP
 $env = $app->detectEnvironment(array(
     'development' => array('*.dev', 'localhost'),
     'production' => array('dashboard.westtoer.be'),
@@ -115,13 +145,13 @@ To create the necessary tables for this framework, ```artisan``` can be used.
 
 In the project root, run:
 
-```
+```Shell
 php artisan migrate:refresh
 ```
 
 If you are using multiple environments, add the corresponding environment with the ```--env``` switch
 
-```
+```Shell
 php artisan --env=development migrate:refresh
 ```
 
@@ -129,12 +159,12 @@ php artisan --env=development migrate:refresh
 
 To add demo information to the database, run ```artisan``` with the ```db:seed``` option
 
-```
+```Shell
 php artisan db:seed
 ```
 
 or with multiple environments, use the ```--env``` switch
 
-```
+```Shell
 php artisan --env=development db:seed
 ```
