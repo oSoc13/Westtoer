@@ -10,11 +10,9 @@ class EventController extends \BaseController {
      *
      * @return Response
      */
-    public function index()
-    {
+    public function index() {
 
-        if ($events = Cache::section('parsed')->get('events_parsed'))
-        {
+        if ( $events = Cache::section('parsed')->get('events_parsed') ) {
             return $events;
         } else {
             $raw_events = Hub::get();
@@ -27,14 +25,16 @@ class EventController extends \BaseController {
         }
     }
 
-    private function retrieve_value($array, $key){
+    private function retrieve_value($array, $key) {
         /* Checks if value is set and returns the value, if value is not set, return null.
          * @param array
          * @param key
          * @return value if set, null if not set.
          */
 
-        return isset($array[$key]) ? $array[$key][0]['value'] : null;
+        return isset($array[$key]) ? 
+               $array[$key][0]['value'] : 
+               null ;
     }
 
     private  function is_event($event){
