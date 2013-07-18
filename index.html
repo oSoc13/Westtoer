@@ -65,7 +65,7 @@ Install composer and run the <code>composer install</code> command in this proje
 <li>Install composer, see <a href="http://getcomposer.org/">http://getcomposer.org/</a> for more information.</li>
 <li>Download the contents of this repo or clone it.</li>
 <li>In the project folder run composer with the parameter <code>install</code>, this will read the <code>composer.json</code> from the current directory and install all required libraries in the subdirectory <code>vendor</code>.</li>
-</ol><pre><code>    composer install
+</ol><pre lang="Shell"><code>    composer install
 </code></pre>
 
 <h3>
@@ -86,21 +86,21 @@ Install composer and run the <code>composer install</code> command in this proje
 <h5>
 <a name="example" class="anchor" href="#example"><span class="octicon octicon-link"></span></a>example</h5>
 
-<pre><code>    'connections' =&gt; array(
+<div class="highlight"><pre>    <span class="s1">'connections'</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
 
-        'mysql' =&gt; array(
-            'driver'    =&gt; 'mysql',
-            'host'      =&gt; 'localhost',
-            'database'  =&gt; 'database_name',
-            'username'  =&gt; 'database_username',
-            'password'  =&gt; 'user_password',
-            'charset'   =&gt; 'utf8',
-            'collation' =&gt; 'utf8_unicode_ci',
-            'prefix'    =&gt; 'prefix_',
-        )
+        <span class="s1">'mysql'</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+            <span class="s1">'driver'</span>    <span class="o">=&gt;</span> <span class="s1">'mysql'</span><span class="p">,</span>
+            <span class="s1">'host'</span>      <span class="o">=&gt;</span> <span class="s1">'localhost'</span><span class="p">,</span>
+            <span class="s1">'database'</span>  <span class="o">=&gt;</span> <span class="s1">'database_name'</span><span class="p">,</span>
+            <span class="s1">'username'</span>  <span class="o">=&gt;</span> <span class="s1">'database_username'</span><span class="p">,</span>
+            <span class="s1">'password'</span>  <span class="o">=&gt;</span> <span class="s1">'user_password'</span><span class="p">,</span>
+            <span class="s1">'charset'</span>   <span class="o">=&gt;</span> <span class="s1">'utf8'</span><span class="p">,</span>
+            <span class="s1">'collation'</span> <span class="o">=&gt;</span> <span class="s1">'utf8_unicode_ci'</span><span class="p">,</span>
+            <span class="s1">'prefix'</span>    <span class="o">=&gt;</span> <span class="s1">'prefix_'</span><span class="p">,</span>
+        <span class="p">)</span>
 
-    ),
-</code></pre>
+    <span class="p">),</span>
+</pre></div>
 
 <h4>
 <a name="appconfigcachephp" class="anchor" href="#appconfigcachephp"><span class="octicon octicon-link"></span></a>/app/config/cache.php</h4>
@@ -112,8 +112,8 @@ Install composer and run the <code>composer install</code> command in this proje
 <h5>
 <a name="example-1" class="anchor" href="#example-1"><span class="octicon octicon-link"></span></a>example</h5>
 
-<pre><code>'driver' =&gt; 'apc',
-</code></pre>
+<div class="highlight"><pre><span class="s1">'driver'</span> <span class="o">=&gt;</span> <span class="s1">'apc'</span><span class="p">,</span>
+</pre></div>
 
 <h4>
 <a name="appconfighubphp" class="anchor" href="#appconfighubphp"><span class="octicon octicon-link"></span></a>/app/config/hub.php</h4>
@@ -124,21 +124,61 @@ Install composer and run the <code>composer install</code> command in this proje
 <li>
 <code>base_url</code> : uri of the datahub</li>
 <li>
+<code>resource</code> : resource file </li>
+<li>
 <code>user</code> : username to connect to the datahub</li>
 <li>
 <code>password</code>: password to connect to the datahub</li>
+<li>
+<code>interval</code>: amount of days in future that should be fetched.</li>
+<li>
+<code>lat_min</code>: min latitude of geo area to retrieve items from.</li>
+<li>
+<code>lat_max</code>: max latitude of geo area to retrieve items from.</li>
+<li>
+<code>lon_min</code>: min longitude of geo area to retrieve items from.</li>
+<li>
+<code>lon_max</code>: max longitude of geo area to retrieve items from.</li>
+<li>
+<code>limit</code>: standard limit of items (triplets) to be fetched.</li>
 <li>
 <code>cache_ttl</code>: time to live for cached data fetched from the datahub.</li>
 </ul><h5>
 <a name="example-2" class="anchor" href="#example-2"><span class="octicon octicon-link"></span></a>example</h5>
 
-<pre><code>return array(
-    'base_url' =&gt; 'https://datahub.westtoer.be/',
-    'user' =&gt; 'username',
-    'password' =&gt; 'password',
-    'cache_ttl' =&gt; 60*60
-);
-</code></pre>
+<div class="highlight"><pre><span class="k">return</span> <span class="k">array</span><span class="p">(</span>
+    <span class="s1">'base_url'</span> <span class="o">=&gt;</span> <span class="s1">'https://datahub.westtoer.be/'</span><span class="p">,</span>
+    <span class="s1">'resource'</span> <span class="o">=&gt;</span> <span class="s1">'query/events.json'</span><span class="p">,</span>
+    <span class="s1">'user'</span> <span class="o">=&gt;</span> <span class="s1">'username'</span><span class="p">,</span>
+    <span class="s1">'password'</span> <span class="o">=&gt;</span> <span class="s1">'password'</span><span class="p">,</span>
+    <span class="s1">'interval'</span> <span class="o">=&gt;</span> <span class="mi">30</span><span class="p">,</span>
+    <span class="s1">'lat_min'</span> <span class="o">=&gt;</span> <span class="mi">50</span><span class="p">,</span>
+    <span class="s1">'lat_max'</span> <span class="o">=&gt;</span> <span class="mi">54</span><span class="p">,</span>
+    <span class="s1">'lon_min'</span> <span class="o">=&gt;</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s1">'lon_max'</span> <span class="o">=&gt;</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="s1">'limit'</span> <span class="o">=&gt;</span> <span class="mi">500</span><span class="p">,</span>
+    <span class="s1">'cache_ttl'</span> <span class="o">=&gt;</span> <span class="mi">60</span><span class="o">*</span><span class="mi">60</span>
+<span class="p">);</span>
+</pre></div>
+
+<h4>
+<a name="appconfigweatherphp" class="anchor" href="#appconfigweatherphp"><span class="octicon octicon-link"></span></a>/app/config/weather.php</h4>
+
+<p>Cache time and api key can be set here. Retrieve api key from Weather Underground</p>
+
+<ul>
+<li>
+<code>api_key</code>: api key for access to Weather Underground.</li>
+<li>
+<code>cache_ttl</code>: time to live for cached data fetched from the weather api.</li>
+</ul><h5>
+<a name="example-3" class="anchor" href="#example-3"><span class="octicon octicon-link"></span></a>example</h5>
+
+<div class="highlight"><pre><span class="k">return</span> <span class="k">array</span><span class="p">(</span>
+    <span class="s1">'api_key'</span> <span class="o">=&gt;</span> <span class="s1">'api_key'</span><span class="p">,</span>
+    <span class="s1">'cache_ttl'</span> <span class="o">=&gt;</span> <span class="mi">60</span><span class="o">*</span><span class="mi">60</span>
+<span class="p">);</span>
+</pre></div>
 
 <h3>
 <a name="multiple-environments" class="anchor" href="#multiple-environments"><span class="octicon octicon-link"></span></a>Multiple environments</h3>
@@ -147,12 +187,12 @@ Install composer and run the <code>composer install</code> command in this proje
 
 <p>Then configure the detection of the development environment in <code>bootstrap/start.php</code>.</p>
 
-<pre><code>$env = $app-&gt;detectEnvironment(array(
-    'development' =&gt; array('*.dev', 'localhost'),
-    'production' =&gt; array('dashboard.westtoer.be'),
+<div class="highlight"><pre><span class="nv">$env</span> <span class="o">=</span> <span class="nv">$app</span><span class="o">-&gt;</span><span class="na">detectEnvironment</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+    <span class="s1">'development'</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">'*.dev'</span><span class="p">,</span> <span class="s1">'localhost'</span><span class="p">),</span>
+    <span class="s1">'production'</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">'dashboard.westtoer.be'</span><span class="p">),</span>
 
-));
-</code></pre>
+<span class="p">));</span>
+</pre></div>
 
 <h3>
 <a name="database-migration" class="anchor" href="#database-migration"><span class="octicon octicon-link"></span></a>Database migration</h3>
@@ -161,12 +201,12 @@ Install composer and run the <code>composer install</code> command in this proje
 
 <p>In the project root, run:</p>
 
-<pre><code>php artisan migrate:refresh
+<pre lang="Shell"><code>php artisan migrate:refresh
 </code></pre>
 
 <p>If you are using multiple environments, add the corresponding environment with the <code>--env</code> switch</p>
 
-<pre><code>php artisan --env=development migrate:refresh
+<pre lang="Shell"><code>php artisan --env=development migrate:refresh
 </code></pre>
 
 <h3>
@@ -174,12 +214,12 @@ Install composer and run the <code>composer install</code> command in this proje
 
 <p>To add demo information to the database, run <code>artisan</code> with the <code>db:seed</code> option</p>
 
-<pre><code>php artisan db:seed
+<pre lang="Shell"><code>php artisan db:seed
 </code></pre>
 
 <p>or with multiple environments, use the <code>--env</code> switch</p>
 
-<pre><code>php artisan --env=development db:seed
+<pre lang="Shell"><code>php artisan --env=development db:seed
 </code></pre>
         </section>
 
