@@ -13,17 +13,6 @@
         <p>
             <a href="javascript:history.go(-1)"><i class="icon-arrow-left"></i> Go back</a>
         </p>
-
-        <p>
-            <a href="javascript:history.go(-1)">
-                <img src="{{ URL::asset('/assets/img/404.png') }}" >
-            </a>
-        </p>
-        
-
-        <p>
-            <a href="javascript:history.go(-1)"><i class="icon-arrow-left"></i> Go back</a>
-        </p>
         <hr>
         
         <footer>
