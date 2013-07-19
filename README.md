@@ -15,7 +15,7 @@ Web framework for Westtoer to retrieve, filter and serve data from the datahub.
 
  * Apache
  * PHP 5.3.x with APC (caching)
- * MySQL
+ * MySQL and MariaDB
 
 ## Installation
 ### Prerequisites
